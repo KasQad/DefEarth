@@ -40,7 +40,7 @@ namespace Rockets
 		{
 			if (Input.GetKeyDown(KeyCode.R)) CreateRocket(Rocket.Type.RocketModel1, listKeyPoint);
 			if (Input.GetKeyDown(KeyCode.T)) CreateRocket(Rocket.Type.RocketModel2, listKeyPoint);
-			if (Input.GetKeyDown(KeyCode.Y)) CreateRocket(Rocket.Type.RocketModel3, listKeyPoint, true);
+			if (Input.GetKeyDown(KeyCode.Y)) CreateRocket(Rocket.Type.RocketModel3, listKeyPoint);
 		}
 
 		private void CreateRocket(Rocket.Type rocketType, List<Transform> newKeyPointList, bool enemy = false)
