@@ -19,6 +19,8 @@ MonoBehaviour:
   - {fileID: 8088473474757977914, guid: e3c006fb5971f3b4b9cf5c7e78e06075, type: 3}
   title: Asteroid Fragment
   health: 10
-  speed: 20
   damage: 10
-  speedRotate: 2
+  speedMin: 20
+  speedMax: 40
+  speedRotateMin: 1
+  speedRotateMax: 3

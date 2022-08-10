@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RocketModel2
   m_EditorClassIdentifier: 
   title: Rocket Model 2
-  health: 20
+  health: 1
   damage: 200
   speed: 20
+  angularSpeed: 1

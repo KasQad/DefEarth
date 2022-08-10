@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Asteroids;
-using Interfaces;
+﻿using Interfaces;
 using Rockets;
 using ScriptableObject.Planets;
 using UnityEngine;
@@ -10,45 +8,45 @@ namespace Planets
 	public abstract class BasePlanet : Entity, IDamageable
 	{
 		public Planet planet;
-		public float orbitSpaceFragments;
-		public float orbitSputniks;
-		public float orbitCaptureGravity;
+		public float radiusOrbitSpaceFragments;
+		public float radiusOrbitSputniks;
+		public float radiusOrbitCaptureGravity;
 		public float speedRotate;
-		
+
 		public void Initialize()
 		{
-			orbitSpaceFragments = planet.orbitSpaceFragments;
-			orbitSputniks = planet.orbitSputniks;
-			orbitCaptureGravity = planet.orbitCaptureGravity;
-			
+			title = gameObject.name = planet.title;
+			entityType = EntityType.Planet;
+			radiusOrbitSpaceFragments = planet.radiusOrbitSpaceFragments;
+			radiusOrbitSputniks = planet.radiusOrbitSputniks;
+			radiusOrbitCaptureGravity = planet.radiusOrbitCaptureGravity;
+			damage = 1000000f;
+
 			var drawLine = gameObject.AddComponent<LinesManager>();
-			drawLine.DrawCircle(gameObject.transform, orbitSpaceFragments, 0.02f, Color.gray);
-			drawLine.DrawCircle(gameObject.transform, orbitSputniks, 0.02f, Color.blue);
-			drawLine.DrawCircle(gameObject.transform, orbitCaptureGravity, 0.02f, Color.yellow);
+			drawLine.DrawCircle(gameObject.transform, radiusOrbitSpaceFragments, 0.02f, Color.gray);
+			drawLine.DrawCircle(gameObject.transform, radiusOrbitSputniks, 0.02f, Color.blue);
+			drawLine.DrawCircle(gameObject.transform, radiusOrbitCaptureGravity, 0.02f, Color.yellow);
 		}
 
-		
+
 		private void Update()
 		{
 			gameObject.transform.Rotate(Vector3.back * (Time.deltaTime * speedRotate));
 		}
 
-		private void OnCollisionEnter2D(Collision2D col)
+		public Vector2 GetPosition()
 		{
-			var entity = col.transform.GetComponent<Entity>();
-			// print($"entity.GetType(): {entity.GetType()}");
-
-			if (entity.Enemy == Enemy)
-			{
-				print($"OnCollisionEnter2D {title}: friendly object {col.transform.name}");
-				return;
-			}
-
-			col.transform.GetComponent<IDamageable>()?.ApplyDamage(10000000);
+			return transform.position;
 		}
 
-		public void ApplyDamage(float applyDamage)
+		public void ApplyDamage(Entity entity)
 		{
+			if (entity.IsEnemy==IsEnemy) return;
+			
+			if(entity.entityType == EntityType.Asteroid ||
+			   entity.entityType == EntityType.AsteroidFragment ||
+			   entity.entityType == EntityType.Rocket)
+				print($"\"{title}\" take damage ({entity.damage}) from \"{entity.title}\"");
 		}
 	}
 }

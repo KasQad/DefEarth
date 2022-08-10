@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Bezier : MonoBehaviour
+public class PathCreator : MonoBehaviour
 {
 	public List<Vector2> CreatePathPointsListByBezierMethod(List<Transform> listKeyPoint)
 	{

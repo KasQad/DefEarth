@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using AsteroidFragments;
 using Rockets;
-using ScriptableObject.Asteroids;
 using UnityEngine;
 
 namespace Asteroids
@@ -11,29 +11,31 @@ namespace Asteroids
 
 		[SerializeField] private List<Transform> pathPointsList = new List<Transform>();
 
-		private readonly Dictionary<Asteroid.Type, BaseAsteroid> _prefabAsteroidList =
-			new Dictionary<Asteroid.Type, BaseAsteroid>();
+		[SerializeField] private AsteroidFragmentsController _asteroidFragmentsController;
+
+		private readonly Dictionary<AsteroidType, BaseAsteroid> _prefabAsteroidList =
+			new Dictionary<AsteroidType, BaseAsteroid>();
 
 		private readonly List<Entity> _asteroidsList = new List<Entity>();
-
+		
 		private void Awake()
 		{
-			_prefabAsteroidList.Add(Asteroid.Type.Small,
+			_prefabAsteroidList.Add(AsteroidType.Small,
 				Resources.Load<BaseAsteroid>("Prefabs/Asteroids/SmallAsteroid"));
-			_prefabAsteroidList.Add(Asteroid.Type.Middle,
+			_prefabAsteroidList.Add(AsteroidType.Middle,
 				Resources.Load<BaseAsteroid>("Prefabs/Asteroids/MiddleAsteroid"));
-			_prefabAsteroidList.Add(Asteroid.Type.Big,
+			_prefabAsteroidList.Add(AsteroidType.Big,
 				Resources.Load<BaseAsteroid>("Prefabs/Asteroids/BigAsteroid"));
 		}
 
 		private void Start()
 		{
-			Entity.DestroyEntity += DestroyAsteroid;
+			BaseAsteroid.destroyAsteroid += DestroyAsteroid;
 		}
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.W))
+			if(Input.GetKeyDown(KeyCode.W))
 			{
 				TestStartAsteroids();
 			}
@@ -45,16 +47,16 @@ namespace Asteroids
 			foreach (var point in pathPointsList)
 				tempPathPointsList.Add(point.position);
 
-			CreateAsteroid(Asteroid.Type.Small, tempPathPointsList, true);
-			CreateAsteroid(Asteroid.Type.Middle, tempPathPointsList, true);
-			CreateAsteroid(Asteroid.Type.Big, tempPathPointsList, true);
+			CreateAsteroid(AsteroidType.Small, tempPathPointsList, true);
+			CreateAsteroid(AsteroidType.Middle, tempPathPointsList, true);
+			CreateAsteroid(AsteroidType.Big, tempPathPointsList, true);
 		}
 
-		private void CreateAsteroid(Asteroid.Type asteroidType, List<Vector2> newPathPointsList, bool enemy = true)
+		private void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy)
 		{
-			if (newPathPointsList.Count == 0) return;
+			if(newPathPointsList.Count == 0) return;
 
-			if (!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
+			if(!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
 
 			var asteroid = Instantiate(prefabAsteroid, asteroidContainer.transform);
 			asteroid.Initialize(newPathPointsList, enemy);
@@ -64,8 +66,9 @@ namespace Asteroids
 		private void DestroyAsteroid(Entity entity)
 		{
 			_asteroidsList.Remove(entity);
-			Destroy(entity.gameObject);
-			// print($"_asteroidsList.Count: {_asteroidsList.Count}");
+			_asteroidFragmentsController.CreateRandomAsteroidFragments(entity.gameObject.transform.position);
+			Destroy(entity.gameObject, 0.1f);
+			print($"DestroyAsteroid: {entity.title}");
 		}
 
 	}

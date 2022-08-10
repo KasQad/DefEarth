@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Asteroids;
 using ScriptableObject.Rockets;
 using UnityEngine;
 
@@ -14,45 +12,53 @@ namespace Rockets
 
 		private readonly List<Entity> _rocketsList = new List<Entity>();
 
-		private Bezier _bezier;
+		private PathCreator _pathCreator;
 
-		private readonly Dictionary<Rocket.Type, BaseRocket> _prefabRocketList =
-			new Dictionary<Rocket.Type, BaseRocket>();
+		private readonly Dictionary<RocketType, BaseRocket> _prefabRocketList =
+			new Dictionary<RocketType, BaseRocket>();
 
 		private void Awake()
 		{
-			_prefabRocketList.Add(Rocket.Type.RocketModel1,
+			_prefabRocketList.Add(RocketType.RocketModel1,
 				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket1"));
-			_prefabRocketList.Add(Rocket.Type.RocketModel2,
+			_prefabRocketList.Add(RocketType.RocketModel2,
 				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket2"));
-			_prefabRocketList.Add(Rocket.Type.RocketModel3,
+			_prefabRocketList.Add(RocketType.RocketModel3,
 				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket3"));
 
-			_bezier = gameObject.GetComponent<Bezier>();
+			_pathCreator = gameObject.GetComponent<PathCreator>();
 		}
 
 		private void Start()
 		{
-			Entity.DestroyEntity += DestroyRocket;
+			BaseRocket.destroyRocket += DestroyRocket;
 		}
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.R)) CreateRocket(Rocket.Type.RocketModel1, listKeyPoint);
-			if (Input.GetKeyDown(KeyCode.T)) CreateRocket(Rocket.Type.RocketModel2, listKeyPoint);
-			if (Input.GetKeyDown(KeyCode.Y)) CreateRocket(Rocket.Type.RocketModel3, listKeyPoint);
+			List<Vector2> pointList = new List<Vector2>();
+			foreach (var point in listKeyPoint)
+				pointList.Add(point.transform.position);
+
+			float minAngle = 90;
+			float maxAngle = 180;
+			
+			// Vector2 start = Functions.GetXYCoordsOnCircleByAngle()
+			
+			if (Input.GetKeyDown(KeyCode.R)) CreateRocket(RocketType.RocketModel1, pointList);
+			if (Input.GetKeyDown(KeyCode.T)) CreateRocket(RocketType.RocketModel2, pointList);
+			if (Input.GetKeyDown(KeyCode.Y)) CreateRocket(RocketType.RocketModel3, pointList);
 		}
 
-		private void CreateRocket(Rocket.Type rocketType, List<Transform> newKeyPointList, bool enemy = false)
+		private void CreateRocket(RocketType rocketType, List<Vector2> newPointList, bool enemy = false)
 		{
-			List<Vector2> newPathPointsList = _bezier.CreatePathPointsListByBezierMethod(newKeyPointList);
-
-			if (newKeyPointList.Count < 2) return;
+			if (newPointList.Count < 2) return;
 
 			if (!_prefabRocketList.TryGetValue(rocketType, out var prefabRocket)) return;
 
 			var rocket = Instantiate(prefabRocket, rocketContainer.transform);
-			rocket.Initialize(newPathPointsList, enemy);
+			Functions.RotateTo(rocket.transform, newPointList[1]);
+			rocket.Initialize(newPointList, enemy);
 			_rocketsList.Add(rocket);
 		}
 
@@ -60,6 +66,7 @@ namespace Rockets
 		{
 			_rocketsList.Remove(entity);
 			Destroy(entity.gameObject);
+			print($"DestroyRocket: {entity.title}");
 			// print($"_rocketsList.Count: {_rocketsList.Count}");
 		}
 

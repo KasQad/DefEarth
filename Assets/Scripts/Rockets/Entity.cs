@@ -4,18 +4,18 @@ using UnityEngine;
 namespace Rockets
 {
 	public class Entity : MonoBehaviour
-	{		
+	{
+		public bool IsEnemy { get; protected set; }
+
+		public EntityType entityType;  
 		public string title;
+		public float damage;
+		public Entity target;
 
-		public bool Enemy { get; protected set; }
-
-		public delegate void DestroyEntityDelegate(Entity entity);
-		public static event DestroyEntityDelegate DestroyEntity;
-		
-		public void Destroy()
+		private void OnCollisionEnter2D(Collision2D col)
 		{
-			print($"{title} Destroyed");
-			DestroyEntity?.Invoke(this);
+			col.transform.GetComponent<IDamageable>()?.ApplyDamage(this);
 		}
+		
 	}
 }

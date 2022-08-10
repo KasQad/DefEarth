@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Rockets;
 using ScriptableObject.Planets;
 using UnityEngine;
 
@@ -9,33 +8,34 @@ namespace Planets
 	{
 		[SerializeField] private GameObject planetContainer;
 
-
-		private readonly Dictionary<Planet.Type, BasePlanet> _prefabPlanetList =
-			new Dictionary<Planet.Type, BasePlanet>();
-
-		private readonly List<Entity> planetsList = new List<Entity>();
+		private readonly Dictionary<PlanetType, BasePlanet> _prefabPlanetList =
+			new Dictionary<PlanetType, BasePlanet>();
+		
+		private readonly Dictionary<PlanetType, BasePlanet> _planetsList =
+			new Dictionary<PlanetType, BasePlanet>();
 
 		private void Awake()
 		{
-			_prefabPlanetList.Add(Planet.Type.Earth, Resources.Load<BasePlanet>("Prefabs/Planets/Earth"));
+			_prefabPlanetList.Add(PlanetType.Earth, Resources.Load<BasePlanet>("Prefabs/Planets/Earth"));
+			CreatePlanet(PlanetType.Earth);
 		}
 
-
-		private void Start()
-		{
-			CreatePlanet(Planet.Type.Earth);
-		}
-
-		private void CreatePlanet(Planet.Type planetType)
+		private void CreatePlanet(PlanetType planetType)
 		{
 			if (!_prefabPlanetList.TryGetValue(planetType, out var prefabPlanet)) return;
-
 			var planet = Instantiate(prefabPlanet, planetContainer.transform);
-
 			planet.Initialize();
-
-			planetsList.Add(planet);
+			_planetsList.Add(planetType, planet);
 		}
 
+		public BasePlanet GetPlanetByType(PlanetType planetType)
+		{
+			return !_planetsList.TryGetValue(planetType, out var entity) ? null : entity;
+		}
+
+		public Dictionary<PlanetType, BasePlanet> GetPlanetList()
+		{
+			return _planetsList;
+		}
 	}
 }

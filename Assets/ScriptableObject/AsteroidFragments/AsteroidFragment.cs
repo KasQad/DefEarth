@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using AsteroidFragments;
 using UnityEngine;
 
 namespace ScriptableObject.AsteroidFragments
@@ -11,8 +10,10 @@ namespace ScriptableObject.AsteroidFragments
 
 		public string title; 
 		public float health;
-		public float speed;
 		public float damage;
-		public float speedRotate;
+		public float speedMin;
+		public float speedMax;
+		public float speedRotateMin;
+		public float speedRotateMax;
 	}
 }

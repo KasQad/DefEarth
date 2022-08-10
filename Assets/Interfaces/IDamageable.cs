@@ -1,7 +1,9 @@
-﻿namespace Interfaces
+﻿using Rockets;
+
+namespace Interfaces
 {
 	public interface IDamageable
 	{
-		public void ApplyDamage(float applyDamage);
+		public void ApplyDamage(Entity entity);
 	}
 }

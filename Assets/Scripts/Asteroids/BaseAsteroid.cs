@@ -1,23 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Interfaces;
 using Rockets;
 using ScriptableObject.Asteroids;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-	public class BaseAsteroid : Entity, IDamageable//, IMovable
+	public class BaseAsteroid : Entity, IDamageable
 	{
 		public float health;
 		public float speed;
 		public float speedRotate;
-		public float damage;
 		public Asteroid asteroid;
-
 		public int currentPointIndex;
 		public List<Vector2> pathPointsList;
-
-		public void Initialize(List<Vector2> newPathPointsList, bool enemy = true)
+		
+		public static Action<Entity> destroyAsteroid;
+		
+		public void Initialize(List<Vector2> newPathPointsList, bool isEnemy = true)
 		{
 			title = gameObject.name = $"{asteroid.title} #{Random.Range(0, 100000)}";
 			gameObject.transform.position = newPathPointsList[0];
@@ -26,23 +28,14 @@ namespace Asteroids
 			health = asteroid.health;
 			damage = asteroid.damage;
 			pathPointsList = newPathPointsList;
-			Enemy = enemy;
+			IsEnemy = isEnemy;
+			entityType = EntityType.Asteroid;
 		}
 
 		private void FixedUpdate()
 		{
 			transform.Rotate(Vector3.forward * (Time.deltaTime * speedRotate));
 			Move();
-		}
-
-		private void OnCollisionEnter2D(Collision2D col)
-		{
-			if (col.transform.GetComponent<Entity>().Enemy == Enemy)
-			{
-				print($"OnCollisionEnter2D {title}: friendly object {col.transform.name}");
-				return;
-			}
-			col.transform.GetComponent<IDamageable>()?.ApplyDamage(damage);
 		}
 
 		private void Move()
@@ -57,12 +50,20 @@ namespace Asteroids
 				currentPointIndex++;
 		}
 
-		public void ApplyDamage(float applyDamage)
+		public void ApplyDamage(Entity entity)
 		{
-			health -= applyDamage;
-			print($"{title} applyDamage: {applyDamage}");
+			if(entity.IsEnemy == IsEnemy) return;
+
+			health -= entity.damage;
+			print($"{title} applyDamage: {entity.damage}");
 			if (health <= 0)
 				Destroy();
+		}
+		
+		private void Destroy()
+		{
+			print($"BaseAsteroid() : {title} Destroyed");
+			destroyAsteroid?.Invoke(this);
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using AsteroidFragments;
 using Interfaces;
 using ScriptableObject.Rockets;
 using UnityEngine;
@@ -8,23 +10,28 @@ namespace Rockets
 {
 	public class BaseRocket : Entity, IDamageable
 	{
+		public Rocket rocket;
 		public float health;
 		public float speed;
-		public float damage;
-		public Rocket rocket;
+		public float angularSpeed;
+		public float accumulativeBrakingSpeed;
+
 		public List<Vector2> pathPointsList;
-		private int _currentPointIndex;
-		
+		private int _currentPointIndex = 1;
+
+		public static Action<Entity> destroyRocket;
+
 		public void Initialize(List<Vector2> newPathPointsList, bool enemy = false)
 		{
 			title = gameObject.name = $"{rocket.title} #{Random.Range(0, 100000)}";
-			Rotate(gameObject, newPathPointsList[0]);
 			gameObject.transform.position = newPathPointsList[0];
 			speed = rocket.speed / 1000;
+			angularSpeed = rocket.angularSpeed;
 			health = rocket.health;
 			damage = rocket.damage;
 			pathPointsList = newPathPointsList;
-			Enemy = enemy;
+			IsEnemy = enemy;
+			entityType = EntityType.Rocket;
 		}
 
 		private void FixedUpdate()
@@ -34,47 +41,58 @@ namespace Rockets
 
 		private void Move()
 		{
-			if (_currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
+			if(_currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
 			{
 				Destroy();
 				return;
 			}
 
-			var position = transform.position;
-
-			Rotate(gameObject, pathPointsList[_currentPointIndex]);
-
-			position = Vector3.MoveTowards(position, pathPointsList[_currentPointIndex], speed);
-			gameObject.transform.position = position;
-
-			if (position.Equals(pathPointsList[_currentPointIndex])) _currentPointIndex++;
+			LookAtTarget(gameObject.transform, pathPointsList[_currentPointIndex], angularSpeed);
+			transform.Translate(Vector3.up * (speed - speed * accumulativeBrakingSpeed / 100));
+			var distance = Vector2.Distance(transform.position, pathPointsList[_currentPointIndex]);
+			if(distance < 0.2f) _currentPointIndex++;
 		}
 
-		private void Rotate(GameObject _gameObject, Vector2 vectorPoint)
+		private void LookAtTarget(Transform objectTransform, Vector3 targetPosition, float newAngularSpeed)
 		{
-			var y = _gameObject.transform.position.y - vectorPoint.y;
-			var x = _gameObject.transform.position.x - vectorPoint.x;
-			var angel = Mathf.Atan2(y, x) / Mathf.PI * 180 + 90;
-			_gameObject.transform.rotation = Quaternion.Euler(0, 0, angel);
-		}
+			var signedAngle = Vector2.SignedAngle(objectTransform.up, targetPosition - objectTransform.position);
 
-		private void OnCollisionEnter2D(Collision2D col)
-		{
-			if (col.transform.GetComponent<Entity>().Enemy == Enemy)
+			if(Mathf.Abs(signedAngle) > 5f)
 			{
-				print($"OnCollisionEnter2D {title}: friendly object {col.transform.name}");
-				return;
+				var angles = objectTransform.eulerAngles;
+				angles.z += signedAngle > 0 ? newAngularSpeed : -newAngularSpeed;
+				objectTransform.eulerAngles = angles;
 			}
 
-			col.transform.GetComponent<IDamageable>()?.ApplyDamage(damage);
+			if(Mathf.Abs(signedAngle) > 20f)
+			{
+				if(accumulativeBrakingSpeed < 70) accumulativeBrakingSpeed += 0.4f;
+			}
+			else if(accumulativeBrakingSpeed > 0) accumulativeBrakingSpeed -= 1f;
+
+			if(accumulativeBrakingSpeed > 70) accumulativeBrakingSpeed = 70;
+			if(accumulativeBrakingSpeed < 0) accumulativeBrakingSpeed = 0;
 		}
 
-		public void ApplyDamage(float applyDamage)
+		public void ApplyDamage(Entity entity)
 		{
-			health -= applyDamage;
-			print($"{title} applyDamage: {applyDamage}");
-			if (health <= 0)
+			if(entity.IsEnemy == IsEnemy) return;
+			
+			if(entity.entityType == EntityType.AsteroidFragment &&
+			   entity.GetComponent<BaseAsteroidFragment>().isInOrbitPlanet == null)
+				return;
+
+
+			health -= entity.damage;
+			print($"{title} applyDamage: {entity.damage}");
+			if(health <= 0)
 				Destroy();
+		}
+
+		private void Destroy()
+		{
+			print($"BaseRocket() : {title} Destroyed");
+			destroyRocket?.Invoke(this);
 		}
 
 
