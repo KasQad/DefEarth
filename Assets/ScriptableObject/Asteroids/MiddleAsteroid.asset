@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Middle Asteroid
   health: 500
-  speed: 5
+  speedMin: 15
+  speedMax: 25
   damage: 500
-  speedRotate: 5
-  mass: 500
+  speedRotateMin: 15
+  speedRotateMax: 25

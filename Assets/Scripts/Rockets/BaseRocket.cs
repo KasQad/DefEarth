@@ -11,7 +11,6 @@ namespace Rockets
 	public class BaseRocket : Entity, IDamageable
 	{
 		public Rocket rocket;
-		public float health;
 		public float speed;
 		public float angularSpeed;
 		public float accumulativeBrakingSpeed;
@@ -66,32 +65,38 @@ namespace Rockets
 
 			if(Mathf.Abs(signedAngle) > 20f)
 			{
-				if(accumulativeBrakingSpeed < 70) accumulativeBrakingSpeed += 0.4f;
+				if(accumulativeBrakingSpeed < 70) accumulativeBrakingSpeed += 0.1f;
 			}
 			else if(accumulativeBrakingSpeed > 0) accumulativeBrakingSpeed -= 1f;
-
+			
 			if(accumulativeBrakingSpeed > 70) accumulativeBrakingSpeed = 70;
 			if(accumulativeBrakingSpeed < 0) accumulativeBrakingSpeed = 0;
 		}
 
+		
+		public void SetTarget(Entity entity)
+		{
+			pathPointsList[pathPointsList.Count-1] = entity.GetPosition();
+		}
+		
 		public void ApplyDamage(Entity entity)
 		{
 			if(entity.IsEnemy == IsEnemy) return;
-			
+
 			if(entity.entityType == EntityType.AsteroidFragment &&
 			   entity.GetComponent<BaseAsteroidFragment>().isInOrbitPlanet == null)
 				return;
 
 
 			health -= entity.damage;
-			print($"{title} applyDamage: {entity.damage}");
+			// print($"{title} applyDamage: {entity.damage}");
 			if(health <= 0)
 				Destroy();
 		}
 
 		private void Destroy()
 		{
-			print($"BaseRocket() : {title} Destroyed");
+			// print($"BaseRocket() : {title} Destroyed");
 			destroyRocket?.Invoke(this);
 		}
 

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Big Asteroid
   health: 1000
-  speed: 1
+  speedMin: 10
+  speedMax: 15
   damage: 1000
-  speedRotate: 3
-  mass: 1000
+  speedRotateMin: 10
+  speedRotateMax: 15

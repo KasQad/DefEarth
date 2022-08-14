@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Planets;
+using Rockets;
 using ScriptableObject.AsteroidFragments;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -16,17 +17,22 @@ namespace AsteroidFragments
 		private readonly List<BaseAsteroidFragment> _prefabAsteroidFragmentsList = new List<BaseAsteroidFragment>();
 		[SerializeField] private PlanetController _planetController;
 
+		public static Action<Vector2> createRandomFragmentsAsteroid;
+
+		
+		private const float RadiusDeactivationAsteroid = 20;
+
 		private void Awake()
 		{
 			foreach (var item in asteroidFragment.asteroidFragmentsPrefabs)
 				_prefabAsteroidFragmentsList.Add(item.GetComponent<BaseAsteroidFragment>());
-
-			print($"_prefabAsteroidFragmentsList.count: {_prefabAsteroidFragmentsList.Count}");
 		}
 
 		private void Start()
 		{
 			BaseAsteroidFragment.destroyAsteroidFragment += DestroyAsteroidFragment;
+			createRandomFragmentsAsteroid += CreateRandomAsteroidFragments;
+
 		}
 
 		private void Update()
@@ -40,38 +46,53 @@ namespace AsteroidFragments
 			CheckEntryToOrbitCaptureGravity();
 		}
 
-		public void CreateRandomAsteroidFragments(Vector2 position)
+		private void CreateRandomAsteroidFragments(Vector2 spawnPosition)
 		{
-			for (var i = 0; i < Random.Range(5, 20); i++)
+			var asteroidFragmentsCount = Random.Range(1, 3);
+			if(asteroidFragmentsCount == 0) return;
+			for (var i = 0; i < asteroidFragmentsCount; i++)
 			{
-				const float radius = 10;
-				var randomAngle = Random.Range(0f, 2 * Mathf.PI - float.Epsilon);
-				var xy = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * radius;
-				CreateAsteroidFragment(position, xy);
+				var randomAngle = Random.Range(0f, 360f);
+				var targetPosition = MathFunctions.GetXYCoordsOnBorderCircleByAngle(spawnPosition, RadiusDeactivationAsteroid, randomAngle);
+				var baseAsteroidFragment = CreateAsteroidFragment(spawnPosition, targetPosition);
+
+				DestroyAsteroidFragmentNotIntersectWithPlanets(baseAsteroidFragment);
 			}
 		}
 
-		private void CreateAsteroidFragment(Vector2 spawnPosition, Vector2 targetPosition, bool enemy = true)
+		private BaseAsteroidFragment CreateAsteroidFragment(Vector2 spawnPosition, Vector2 targetPosition, bool enemy = true)
 		{
-			if(_prefabAsteroidFragmentsList.Count == 0) return;
+			if(_prefabAsteroidFragmentsList.Count == 0) return null;
 
-			List<Vector2> pathPointsList = new List<Vector2>();
-			pathPointsList.Add(spawnPosition);
-			pathPointsList.Add(targetPosition);
+			var pathPointsList = new List<Vector2> { spawnPosition, targetPosition };
 
 			var index = Random.Range(0, _prefabAsteroidFragmentsList.Count);
 			var prefabAsteroidFragment = _prefabAsteroidFragmentsList[index];
-			var asteroidFragmentPrefab = Instantiate(prefabAsteroidFragment, AsteroidFragmentsContainer.transform);
-			asteroidFragmentPrefab.Initialize(pathPointsList, enemy);
-			_asteroidFragmentsList.Add(asteroidFragmentPrefab);
+			var baseAsteroidFragment = Instantiate(prefabAsteroidFragment, AsteroidFragmentsContainer.transform);
+			baseAsteroidFragment.Initialize(pathPointsList, enemy);
+			_asteroidFragmentsList.Add(baseAsteroidFragment);
+			return baseAsteroidFragment;
 		}
 
 
-		private void DestroyAsteroidFragment(BaseAsteroidFragment baseAsteroidFragment)
+		private void DestroyAsteroidFragment(BaseAsteroidFragment baseAsteroidFragment, float time = 0)
 		{
 			_asteroidFragmentsList.Remove(baseAsteroidFragment);
-			Destroy(baseAsteroidFragment.gameObject);
-			print($"DestroyAsteroidFragment: {baseAsteroidFragment.title}");
+			Destroy(baseAsteroidFragment.gameObject, time);
+		}
+
+		private void DestroyAsteroidFragmentNotIntersectWithPlanets(BaseAsteroidFragment baseAsteroidFragment)
+		{
+			var planetList = _planetController.GetPlanetList();
+			foreach (var planetItem in planetList)
+			{
+				if(!MathFunctions.CircleLineIntersect(
+					   baseAsteroidFragment.pathPointsList[0], baseAsteroidFragment.pathPointsList[1], 
+					   planetItem.Value.GetPosition(), planetItem.Value.radiusOrbitCaptureGravity))
+				{
+					baseAsteroidFragment.Destroy(2f);
+				}
+			}
 		}
 
 		private void CheckEntryToOrbitCaptureGravity()
@@ -91,11 +112,16 @@ namespace AsteroidFragments
 					var asteroidFragmentPosition = asteroidFragmentItem.transform.position;
 					var radiusOrbitSpaceFragments = planetItem.Value.radiusOrbitSpaceFragments;
 
-					if(Mathf.Abs(Vector2.Distance(asteroidFragmentPosition, planetPosition)) > radiusOrbitCaptureGravity ||
-					   Mathf.Abs(Vector2.Distance(asteroidFragmentPosition, planetPosition)) < radiusOrbitSpaceFragments )
+					if(Mathf.Abs(Vector2.Distance(asteroidFragmentPosition, planetPosition)) >
+					   radiusOrbitCaptureGravity ||
+					   Mathf.Abs(Vector2.Distance(asteroidFragmentPosition, planetPosition)) <
+					   radiusOrbitSpaceFragments)
 						continue;
 
-					var angleEntryToOrbitCapture = Functions.GetAngleBetweenTwoLines(
+					asteroidFragmentItem.collider2D.enabled = true;
+					// print($"asteroidFragmentItem.title: {asteroidFragmentItem.title}");
+
+					var angleEntryToOrbitCapture = MathFunctions.GetAngleBetweenTwoLines(
 						new Vector2(planetPosition.x + 100, planetPosition.y),
 						asteroidFragmentPosition,
 						new Vector2(planetPosition.x, planetPosition.y));
@@ -103,18 +129,19 @@ namespace AsteroidFragments
 					if(planetPosition.y > asteroidFragmentPosition.y)
 						angleEntryToOrbitCapture = 360 - angleEntryToOrbitCapture;
 
-
 					var angleEntry1 = angleEntryToOrbitCapture - 315;
 					var angleEntry2 = angleEntryToOrbitCapture - 45;
 
-					Vector2 pointOnOrbitSpaceFragments1 = Functions.GetXYCoordsOnCircleByAngle(planetPosition,
+					Vector2 pointOnOrbitSpaceFragments1 = MathFunctions.GetXYCoordsOnBorderCircleByAngle(planetPosition,
 						radiusOrbitSpaceFragments, angleEntry1);
 
-					Vector2 pointOnOrbitSpaceFragments2 = Functions.GetXYCoordsOnCircleByAngle(planetPosition,
+					Vector2 pointOnOrbitSpaceFragments2 = MathFunctions.GetXYCoordsOnBorderCircleByAngle(planetPosition,
 						radiusOrbitSpaceFragments, angleEntry2);
 
-					var distance1 = Vector2.Distance(pointOnOrbitSpaceFragments1, asteroidFragmentItem.pathPointsList[0]);
-					var distance2 = Vector2.Distance(pointOnOrbitSpaceFragments2, asteroidFragmentItem.pathPointsList[0]);
+					var distance1 = Vector2.Distance(pointOnOrbitSpaceFragments1,
+						asteroidFragmentItem.pathPointsList[0]);
+					var distance2 = Vector2.Distance(pointOnOrbitSpaceFragments2,
+						asteroidFragmentItem.pathPointsList[0]);
 
 					asteroidFragmentItem.pathPointsList.Clear();
 					asteroidFragmentItem.pathPointsList.Add(asteroidFragmentPosition);
@@ -134,11 +161,11 @@ namespace AsteroidFragments
 						asteroidFragmentItem.InitializeMovingOnOrbitPlanet(planetItem.Key, planetPosition,
 							radiusOrbitSpaceFragments, angleEntry2, directionMovingOnOrbitPlanet);
 					}
-
 				}
-
 			}
 		}
+		
+		public List<BaseAsteroidFragment> GetAsteroidFragmentsList() => _asteroidFragmentsList;
 
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AsteroidFragments;
 using Interfaces;
 using Rockets;
 using ScriptableObject.Asteroids;
@@ -10,21 +11,19 @@ namespace Asteroids
 {
 	public class BaseAsteroid : Entity, IDamageable
 	{
-		public float health;
 		public float speed;
 		public float speedRotate;
 		public Asteroid asteroid;
 		public int currentPointIndex;
 		public List<Vector2> pathPointsList;
-		
-		public static Action<Entity> destroyAsteroid;
-		
+
+
 		public void Initialize(List<Vector2> newPathPointsList, bool isEnemy = true)
 		{
 			title = gameObject.name = $"{asteroid.title} #{Random.Range(0, 100000)}";
 			gameObject.transform.position = newPathPointsList[0];
-			speed = asteroid.speed / 1000;
-			speedRotate = asteroid.speedRotate;
+			speed = Random.Range(asteroid.speedMin, asteroid.speedMax) / 1000;
+			speedRotate = Random.Range(asteroid.speedRotateMin, asteroid.speedRotateMax);
 			health = asteroid.health;
 			damage = asteroid.damage;
 			pathPointsList = newPathPointsList;
@@ -40,30 +39,35 @@ namespace Asteroids
 
 		private void Move()
 		{
-			if (currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0) return;
+			if(currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
+			{
+				Destroy();
+				return;
+			}
 
 			var position = transform.position;
 			position = Vector3.MoveTowards(position, pathPointsList[currentPointIndex], speed);
 			gameObject.transform.position = position;
 
-			if (position.Equals(pathPointsList[currentPointIndex]))
+			if(position.Equals(pathPointsList[currentPointIndex]))
 				currentPointIndex++;
 		}
+
 
 		public void ApplyDamage(Entity entity)
 		{
 			if(entity.IsEnemy == IsEnemy) return;
 
+			AsteroidFragmentsController.createRandomFragmentsAsteroid?.Invoke(GetPosition());
 			health -= entity.damage;
-			print($"{title} applyDamage: {entity.damage}");
-			if (health <= 0)
+			// print($"{title} applyDamage: {entity.damage}");
+			if(health <= 0)
 				Destroy();
 		}
-		
+
 		private void Destroy()
 		{
-			print($"BaseAsteroid() : {title} Destroyed");
-			destroyAsteroid?.Invoke(this);
+			AsteroidController.destroyAsteroidAction?.Invoke(this);
 		}
 	}
 }

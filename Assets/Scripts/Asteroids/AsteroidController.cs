@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using AsteroidFragments;
+using JetBrains.Annotations;
 using Rockets;
 using UnityEngine;
 
@@ -8,15 +10,16 @@ namespace Asteroids
 	public class AsteroidController : MonoBehaviour
 	{
 		[SerializeField] private GameObject asteroidContainer;
-
 		[SerializeField] private List<Transform> pathPointsList = new List<Transform>();
-
-		[SerializeField] private AsteroidFragmentsController _asteroidFragmentsController;
+		[SerializeField] private AsteroidFragmentsController asteroidFragmentsController;
 
 		private readonly Dictionary<AsteroidType, BaseAsteroid> _prefabAsteroidList =
 			new Dictionary<AsteroidType, BaseAsteroid>();
 
-		private readonly List<Entity> _asteroidsList = new List<Entity>();
+		private readonly HashSet<Entity> _asteroidsList = new HashSet<Entity>();
+		
+		public static Action<Entity> destroyAsteroidAction;
+		
 		
 		private void Awake()
 		{
@@ -30,7 +33,7 @@ namespace Asteroids
 
 		private void Start()
 		{
-			BaseAsteroid.destroyAsteroid += DestroyAsteroid;
+			destroyAsteroidAction += DestroyAsteroid;
 		}
 
 		private void Update()
@@ -52,24 +55,23 @@ namespace Asteroids
 			CreateAsteroid(AsteroidType.Big, tempPathPointsList, true);
 		}
 
-		private void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy)
+		public void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy)
 		{
 			if(newPathPointsList.Count == 0) return;
-
 			if(!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
-
 			var asteroid = Instantiate(prefabAsteroid, asteroidContainer.transform);
 			asteroid.Initialize(newPathPointsList, enemy);
 			_asteroidsList.Add(asteroid);
+			PlayerRocketLauncherController.addEntityToHashSetAction?.Invoke(asteroid);
 		}
 
 		private void DestroyAsteroid(Entity entity)
 		{
+			PlayerRocketLauncherController.delEntityFromHashSetAction?.Invoke(entity);
 			_asteroidsList.Remove(entity);
-			_asteroidFragmentsController.CreateRandomAsteroidFragments(entity.gameObject.transform.position);
-			Destroy(entity.gameObject, 0.1f);
-			print($"DestroyAsteroid: {entity.title}");
+			Destroy(entity.gameObject);
 		}
 
+		public HashSet<Entity> GetAsteroidsList() => _asteroidsList;
 	}
 }

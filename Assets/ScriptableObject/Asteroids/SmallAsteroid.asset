@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Small Asteroid
   health: 100
-  speed: 10
+  speedMin: 20
+  speedMax: 40
   damage: 100
-  speedRotate: 8
-  mass: 100
+  speedRotateMin: 20
+  speedRotateMax: 40

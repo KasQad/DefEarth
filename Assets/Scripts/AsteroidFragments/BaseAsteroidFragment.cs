@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Interfaces;
 using Rockets;
 using ScriptableObject.AsteroidFragments;
-using ScriptableObject.Planets;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,20 +11,20 @@ namespace AsteroidFragments
 	public class BaseAsteroidFragment : Entity, IDamageable
 	{
 		public AsteroidFragment asteroidFragment;
-		public float health;
+		[SerializeField] public Collider2D collider2D;
 		public float speed;
 		public float speedRotate;
 
 		public List<Vector2> pathPointsList = new List<Vector2>();
 		private int _currentPointIndex;
 
-		public PlanetType? isInOrbitPlanet = null;
+		public PlanetType? isInOrbitPlanet;
 		private float _angleOnOrbitPlanet;
 		private Vector2 _positionPlanet;
 		private float _radiusOrbitSpaceFragments;
 		private int _directionMovingOnOrbitPlanet;
 
-		public static Action<BaseAsteroidFragment> destroyAsteroidFragment;
+		public static Action<BaseAsteroidFragment, float> destroyAsteroidFragment;
 
 		private void FixedUpdate()
 		{
@@ -96,16 +95,16 @@ namespace AsteroidFragments
 		{
 			if(entity.IsEnemy == IsEnemy) return;
 			if(isInOrbitPlanet == null) return;
-			
+
 			health -= entity.damage;
-			print($"{title} applyDamage: {entity.damage}");
+			// print($"{title} applyDamage: {entity.damage}");
 			if(health <= 0)
 				Destroy();
 		}
 
-		private void Destroy()
+		public void Destroy(float time = 0)
 		{
-			destroyAsteroidFragment?.Invoke(this);
+			destroyAsteroidFragment?.Invoke(this, time);
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Planets
 		public float radiusOrbitSputniks;
 		public float radiusOrbitCaptureGravity;
 		public float speedRotate;
+		public float radiusPlanet;
 
 		public void Initialize()
 		{
@@ -20,6 +21,8 @@ namespace Planets
 			radiusOrbitSpaceFragments = planet.radiusOrbitSpaceFragments;
 			radiusOrbitSputniks = planet.radiusOrbitSputniks;
 			radiusOrbitCaptureGravity = planet.radiusOrbitCaptureGravity;
+			radiusPlanet = planet.radiusPlanet;
+			speedRotate = planet.speedRotate;
 			damage = 1000000f;
 
 			var drawLine = gameObject.AddComponent<LinesManager>();
@@ -28,21 +31,15 @@ namespace Planets
 			drawLine.DrawCircle(gameObject.transform, radiusOrbitCaptureGravity, 0.02f, Color.yellow);
 		}
 
-
 		private void Update()
 		{
 			gameObject.transform.Rotate(Vector3.back * (Time.deltaTime * speedRotate));
 		}
 
-		public Vector2 GetPosition()
-		{
-			return transform.position;
-		}
-
 		public void ApplyDamage(Entity entity)
 		{
-			if (entity.IsEnemy==IsEnemy) return;
-			
+			if(entity.IsEnemy == IsEnemy) return;
+
 			if(entity.entityType == EntityType.Asteroid ||
 			   entity.entityType == EntityType.AsteroidFragment ||
 			   entity.entityType == EntityType.Rocket)
