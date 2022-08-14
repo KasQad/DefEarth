@@ -45,7 +45,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		var asteroidsList = asteroidController.GetAsteroidsList();
 		if (asteroidsList.Count==0) return;
 
-		Entity asteroid=null;//= FindNearestAsteroidToPlayerEntity(planet);
+		Entity asteroid=null;
 			
 		var whiteList = new HashSet<Entity>();
 
@@ -102,9 +102,8 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		var pathList = new List<Vector2> { pointStart, pointEnd };
 		var rocket = rocketController.CreateRocket(RocketType.RocketModel3, pathList);
 		AddRocketToHashSet(entity, rocket);
-
-	}
-
+		}
+	
 
 	private void UpdateAimingEntitiesHashSet()
 	{
