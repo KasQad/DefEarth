@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Interfaces;
-using Rockets;
 using ScriptableObject.AsteroidFragments;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,8 +19,8 @@ namespace AsteroidFragments
 
 		public PlanetType? isInOrbitPlanet;
 		private float _angleOnOrbitPlanet;
-		private Vector2 _positionPlanet;
 		private float _radiusOrbitSpaceFragments;
+		private Vector2 _positionPlanet;
 		private int _directionMovingOnOrbitPlanet;
 
 		public static Action<BaseAsteroidFragment, float> destroyAsteroidFragment;
@@ -35,7 +34,7 @@ namespace AsteroidFragments
 		public void Initialize(List<Vector2> newPathPointsList, bool enemy = true)
 		{
 			title = gameObject.name = $"{asteroidFragment.title} #{Random.Range(0, 100000)}";
-			gameObject.transform.position = newPathPointsList[0];
+			transform.position = newPathPointsList[0];
 			speed = Random.Range(asteroidFragment.speedMin, asteroidFragment.speedMax) / 1000;
 			speedRotate = Random.Range(asteroidFragment.speedRotateMin, asteroidFragment.speedRotateMax);
 			health = asteroidFragment.health;
@@ -58,10 +57,10 @@ namespace AsteroidFragments
 
 		private void Move()
 		{
-			if(pathPointsList.Count == 0) return;
-			if(_currentPointIndex >= pathPointsList.Count)
+			if (pathPointsList.Count == 0) return;
+			if (_currentPointIndex >= pathPointsList.Count)
 			{
-				if(isInOrbitPlanet != null)
+				if (isInOrbitPlanet != null)
 				{
 					MoveOnOrbit();
 					return;
@@ -75,7 +74,7 @@ namespace AsteroidFragments
 			position = Vector3.MoveTowards(position, pathPointsList[_currentPointIndex], speed);
 			gameObject.transform.position = position;
 
-			if(position.Equals(pathPointsList[_currentPointIndex]))
+			if (position.Equals(pathPointsList[_currentPointIndex]))
 				_currentPointIndex++;
 		}
 
@@ -87,19 +86,17 @@ namespace AsteroidFragments
 			var y = _positionPlanet.y + _radiusOrbitSpaceFragments * Mathf.Sin(radians);
 			transform.position = new Vector2(x, y);
 			_angleOnOrbitPlanet += stepMove;
-			if(_angleOnOrbitPlanet > 360) _angleOnOrbitPlanet = 0;
+			if (_angleOnOrbitPlanet > 360) _angleOnOrbitPlanet = 0;
 		}
-
 
 		public void ApplyDamage(Entity entity)
 		{
-			if(entity.IsEnemy == IsEnemy) return;
-			if(isInOrbitPlanet == null) return;
+			if (entity.IsEnemy == IsEnemy) return;
+			if (isInOrbitPlanet == null) return;
+			if (entity.entityType == EntityType.Rocket) return;
 
 			health -= entity.damage;
-			// print($"{title} applyDamage: {entity.damage}");
-			if(health <= 0)
-				Destroy();
+			if (health <= 0) Destroy();
 		}
 
 		public void Destroy(float time = 0)

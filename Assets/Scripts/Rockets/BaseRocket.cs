@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AsteroidFragments;
 using Interfaces;
 using ScriptableObject.Rockets;
 using UnityEngine;
@@ -18,12 +17,13 @@ namespace Rockets
 		public List<Vector2> pathPointsList;
 		private int _currentPointIndex = 1;
 
-		public static Action<Entity> destroyRocket;
+		public static Action<BaseRocket> destroyRocket;
 
 		public void Initialize(List<Vector2> newPathPointsList, bool enemy = false)
 		{
 			title = gameObject.name = $"{rocket.title} #{Random.Range(0, 100000)}";
 			gameObject.transform.position = newPathPointsList[0];
+			MathFunctions.LookAt2D(transform, newPathPointsList[1]);
 			speed = rocket.speed / 1000;
 			angularSpeed = rocket.angularSpeed;
 			health = rocket.health;
@@ -40,63 +40,58 @@ namespace Rockets
 
 		private void Move()
 		{
-			if(_currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
+			if (_currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
 			{
 				Destroy();
 				return;
 			}
-
 			LookAtTarget(gameObject.transform, pathPointsList[_currentPointIndex], angularSpeed);
 			transform.Translate(Vector3.up * (speed - speed * accumulativeBrakingSpeed / 100));
 			var distance = Vector2.Distance(transform.position, pathPointsList[_currentPointIndex]);
-			if(distance < 0.2f) _currentPointIndex++;
+			if (distance < 0.2f) _currentPointIndex++;
 		}
 
 		private void LookAtTarget(Transform objectTransform, Vector3 targetPosition, float newAngularSpeed)
 		{
 			var signedAngle = Vector2.SignedAngle(objectTransform.up, targetPosition - objectTransform.position);
 
-			if(Mathf.Abs(signedAngle) > 5f)
+			if (Mathf.Abs(signedAngle) > 15f)
 			{
 				var angles = objectTransform.eulerAngles;
 				angles.z += signedAngle > 0 ? newAngularSpeed : -newAngularSpeed;
 				objectTransform.eulerAngles = angles;
 			}
 
-			if(Mathf.Abs(signedAngle) > 20f)
+			if (Mathf.Abs(signedAngle) > 20f)
 			{
-				if(accumulativeBrakingSpeed < 70) accumulativeBrakingSpeed += 0.1f;
+				if (accumulativeBrakingSpeed < 70) accumulativeBrakingSpeed += 0.1f;
 			}
-			else if(accumulativeBrakingSpeed > 0) accumulativeBrakingSpeed -= 1f;
-			
-			if(accumulativeBrakingSpeed > 70) accumulativeBrakingSpeed = 70;
-			if(accumulativeBrakingSpeed < 0) accumulativeBrakingSpeed = 0;
+			else if (accumulativeBrakingSpeed > 0) accumulativeBrakingSpeed -= 1f;
+
+			if (accumulativeBrakingSpeed > 70) accumulativeBrakingSpeed = 70;
+			if (accumulativeBrakingSpeed < 0) accumulativeBrakingSpeed = 0;
 		}
 
-		
+
 		public void SetTarget(Entity entity)
 		{
-			pathPointsList[pathPointsList.Count-1] = entity.GetPosition();
+			pathPointsList[pathPointsList.Count - 1] = entity.GetPosition();
 		}
-		
+
 		public void ApplyDamage(Entity entity)
 		{
-			if(entity.IsEnemy == IsEnemy) return;
+			if (entity.IsEnemy == IsEnemy) return;
 
-			if(entity.entityType == EntityType.AsteroidFragment &&
-			   entity.GetComponent<BaseAsteroidFragment>().isInOrbitPlanet == null)
+			if (entity.entityType == EntityType.AsteroidFragment)
+				//&& entity.GetComponent<BaseAsteroidFragment>().isInOrbitPlanet == null)
 				return;
 
-
 			health -= entity.damage;
-			// print($"{title} applyDamage: {entity.damage}");
-			if(health <= 0)
-				Destroy();
+			if (health <= 0) Destroy();
 		}
 
 		private void Destroy()
 		{
-			// print($"BaseRocket() : {title} Destroyed");
 			destroyRocket?.Invoke(this);
 		}
 

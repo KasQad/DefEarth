@@ -33,6 +33,14 @@ public class MathFunctions : MonoBehaviour
 		transform.rotation = Quaternion.Euler(0, 0, angel);
 	}
 
+	public static void LookAt2D(Transform transformObject, Vector2 targetPosition)
+	{
+		var position = transformObject.position;
+		var lookDir = targetPosition - new Vector2(position.x, position.y);
+		var angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
+		transformObject.localEulerAngles = new Vector3(0, 0, angle - 90);
+	}
+
 	public static Vector2 LineExtension(Vector2 start, Vector2 end, float length)
 	{
 		var vector = new Vector2(end.x - start.x, end.y - start.y);
@@ -55,7 +63,7 @@ public class MathFunctions : MonoBehaviour
 		return !(bb4Ac < 0);
 	}
 	
-	public static bool CircleLineIntersect(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter, float circleRadius)
+	public static bool LineCrossingCircle(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter, float circleRadius)
 	{
 		var dx = linePoint2.x - linePoint1.x;
 		var dy = linePoint2.y - linePoint1.y;
@@ -68,5 +76,4 @@ public class MathFunctions : MonoBehaviour
 		var dist = Mathf.Sqrt(Mathf.Pow(nearestX - circleCenter.x, 2) + Mathf.Pow(nearestY - circleCenter.y, 2));
 		return !(dist > circleRadius);
 	}
-	
 }

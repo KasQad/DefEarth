@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class LinesManager : MonoBehaviour
 {
-	public void DrawCircle(Transform transformObject, float radius, float lineWidth, Color color)
+	public void DrawCircle(Transform transformParent, Vector2 position, float radius, float lineWidth, Color color)
 	{
-
 		GameObject lineObject = new GameObject();
 		lineObject.name = $"orbitLine";
-		lineObject.transform.parent = transformObject;
+		lineObject.transform.parent = transformParent;
 
 		var line = lineObject.AddComponent<LineRenderer>();
 
@@ -30,8 +29,8 @@ public class LinesManager : MonoBehaviour
 		for (var i = 0; i < pointCount; i++)
 		{
 			var rad = Mathf.Deg2Rad * (i * 360f / segments);
-			points[i] = new Vector3(transformObject.position.x + Mathf.Sin(rad) * radius,
-				transformObject.position.y + Mathf.Cos(rad) * radius);
+			points[i] = new Vector3(position.x + Mathf.Sin(rad) * radius,
+				position.y + Mathf.Cos(rad) * radius);
 		}
 
 		line.SetPositions(points);

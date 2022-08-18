@@ -18,7 +18,8 @@ namespace Asteroids
 
 		private readonly HashSet<Entity> _asteroidsList = new HashSet<Entity>();
 		
-		public static Action<Entity> destroyAsteroidAction;
+		public static Action<Entity> addEntityToHashSetAction;
+		public static Action<Entity> delEntityFromHashSetAction;
 		
 		
 		private void Awake()
@@ -33,41 +34,23 @@ namespace Asteroids
 
 		private void Start()
 		{
-			destroyAsteroidAction += DestroyAsteroid;
+			BaseAsteroid.destroyAsteroidAction += DestroyAsteroid;
 		}
 
-		private void Update()
-		{
-			if(Input.GetKeyDown(KeyCode.W))
-			{
-				TestStartAsteroids();
-			}
-		}
-
-		private void TestStartAsteroids()
-		{
-			List<Vector2> tempPathPointsList = new List<Vector2>();
-			foreach (var point in pathPointsList)
-				tempPathPointsList.Add(point.position);
-
-			CreateAsteroid(AsteroidType.Small, tempPathPointsList, true);
-			CreateAsteroid(AsteroidType.Middle, tempPathPointsList, true);
-			CreateAsteroid(AsteroidType.Big, tempPathPointsList, true);
-		}
-
-		public void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy)
+		public void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy,
+			float newSpeed = 0, float newSpeedRotate = 0)
 		{
 			if(newPathPointsList.Count == 0) return;
 			if(!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
 			var asteroid = Instantiate(prefabAsteroid, asteroidContainer.transform);
-			asteroid.Initialize(newPathPointsList, enemy);
+			asteroid.Initialize(newPathPointsList, enemy, newSpeed, newSpeedRotate);
 			_asteroidsList.Add(asteroid);
-			PlayerRocketLauncherController.addEntityToHashSetAction?.Invoke(asteroid);
+			addEntityToHashSetAction?.Invoke(asteroid);
 		}
 
 		private void DestroyAsteroid(Entity entity)
 		{
-			PlayerRocketLauncherController.delEntityFromHashSetAction?.Invoke(entity);
+			delEntityFromHashSetAction?.Invoke(entity);
 			_asteroidsList.Remove(entity);
 			Destroy(entity.gameObject);
 		}

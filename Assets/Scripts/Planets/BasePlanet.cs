@@ -26,9 +26,9 @@ namespace Planets
 			damage = 1000000f;
 
 			var drawLine = gameObject.AddComponent<LinesManager>();
-			drawLine.DrawCircle(gameObject.transform, radiusOrbitSpaceFragments, 0.02f, Color.gray);
-			drawLine.DrawCircle(gameObject.transform, radiusOrbitSputniks, 0.02f, Color.blue);
-			drawLine.DrawCircle(gameObject.transform, radiusOrbitCaptureGravity, 0.02f, Color.yellow);
+			drawLine.DrawCircle(gameObject.transform, gameObject.transform.position,radiusOrbitSpaceFragments, 0.02f, Color.gray);
+			drawLine.DrawCircle(gameObject.transform, gameObject.transform.position,radiusOrbitSputniks, 0.02f, Color.blue);
+			drawLine.DrawCircle(gameObject.transform, gameObject.transform.position,radiusOrbitCaptureGravity, 0.02f, Color.yellow);
 		}
 
 		private void Update()

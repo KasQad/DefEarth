@@ -3,8 +3,16 @@
 	Small,
 	Middle,
 	Big
-	
-}public enum EntityType
+}
+
+public enum WarshipType
+{
+	Fighter,
+	RocketCarrier,
+	HeavyCruiser
+}
+
+public enum EntityType
 {
 	Planet,
 	Rocket,

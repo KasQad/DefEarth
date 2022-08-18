@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5606804317896678883}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.41, y: -0.97, z: 0}
+  m_LocalPosition: {x: -6.9, y: -1.3, z: 0}
   m_LocalScale: {x: 0.5201469, y: 0.5201469, z: 0.5201469}
   m_Children: []
   m_Father: {fileID: 0}
@@ -113,12 +113,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e74cd19a2ce2f48a88a327e9084803, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityType: 0
+  health: 0
   title: 
+  damage: 0
   planet: {fileID: 11400000, guid: 7792349b0272afa458be91b5c5f26968, type: 2}
-  orbitSpaceFragments: 0
-  orbitSputniks: 0
-  orbitCaptureGravity: 0
+  radiusOrbitSpaceFragments: 0
+  radiusOrbitSputniks: 0
+  radiusOrbitCaptureGravity: 0
   speedRotate: 0
+  radiusPlanet: 0
 --- !u!50 &6502498450252402758
 Rigidbody2D:
   serializedVersion: 4

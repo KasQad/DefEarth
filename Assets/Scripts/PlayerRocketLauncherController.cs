@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Asteroids;
 using Planets;
 using Rockets;
@@ -13,26 +14,23 @@ public class PlayerRocketLauncherController : MonoBehaviour
 	[SerializeField] private PlanetController planetController;
 	[SerializeField] private RocketController rocketController;
 	[SerializeField] private AsteroidController asteroidController;
-	[SerializeField] private LinesManager linesManager;
 
-	private readonly Dictionary<Entity, HashSet<BaseRocket>> _entitiesAimed = new Dictionary<Entity, HashSet<BaseRocket>>();
-
-	public static Action<Entity> addEntityToHashSetAction;
-	public static Action<Entity> delEntityFromHashSetAction;
-
+	private readonly Dictionary<Entity, HashSet<BaseRocket>> _entitiesAimed =
+		new Dictionary<Entity, HashSet<BaseRocket>>();
 
 	private void Start()
 	{
 		StartCoroutine(StartRockets());
-		addEntityToHashSetAction += AddEntityToEntitiesAimedDictionary;
-		delEntityFromHashSetAction += DelEntityFromEntitiesAimedDictionary;
+		AsteroidController.addEntityToHashSetAction += AddEntityToEntitiesAimedDictionary;
+		AsteroidController.delEntityFromHashSetAction += DelEntityFromEntitiesAimedDictionary;
+		BaseRocket.destroyRocket += FindAndDelEmptyRocketFromHashSet;
 	}
 
 	IEnumerator StartRockets()
 	{
 		while (true)
 		{
-			yield return new WaitForSeconds(0.10f);
+			yield return new WaitForSeconds(0.010f);
 			FindNearestFreeAsteroidToPlayerEntity();
 			UpdateAimingEntitiesHashSet();
 		}
@@ -43,10 +41,10 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		var planet = planetController.GetPlanetByType(PlanetType.Earth);
 
 		var asteroidsList = asteroidController.GetAsteroidsList();
-		if (asteroidsList.Count==0) return;
+		if (asteroidsList.Count == 0) return;
 
-		Entity asteroid=null;
-			
+		Entity asteroid = null;
+
 		var whiteList = new HashSet<Entity>();
 
 		foreach (var entity in asteroidsList)
@@ -54,14 +52,11 @@ public class PlayerRocketLauncherController : MonoBehaviour
 			var amountOfDamageAimingEntities = GetAmountOfDamageAimingEntities(entity);
 			if (amountOfDamageAimingEntities <= entity.health) whiteList.Add(entity);
 		}
-		
-		if (whiteList.Count>0)
-			asteroid = FindNearestAsteroidToPlayerEntity(planet, whiteList);
-		
-		if (asteroid == null) return;
 
-		linesManager.DrawLine(transform, new List<Vector2> { planet.GetPosition(), asteroid.GetPosition() }, 0.01f,
-			Color.blue);
+		if (whiteList.Count > 0)
+			asteroid = FindNearestAsteroidToPlayerEntity(planet, whiteList);
+
+		if (asteroid == null) return;
 
 		LunchRocketToEntity(asteroid, planet);
 	}
@@ -98,12 +93,16 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		var randomAnglePointStartOnPlanet = Random.Range(0f, 360);
 		var pointStart = MathFunctions.GetXYCoordsOnBorderCircleByAngle(
 			planet.GetPosition(), planet.radiusPlanet, randomAnglePointStartOnPlanet);
+
+		var pointMiddle = MathFunctions.GetXYCoordsOnBorderCircleByAngle(
+			planet.GetPosition(), planet.radiusOrbitSpaceFragments, randomAnglePointStartOnPlanet);
+
+
 		var pointEnd = entity.GetPosition();
-		var pathList = new List<Vector2> { pointStart, pointEnd };
+		var pathList = new List<Vector2> { pointStart, pointMiddle, pointEnd };
 		var rocket = rocketController.CreateRocket(RocketType.RocketModel3, pathList);
 		AddRocketToHashSet(entity, rocket);
-		}
-	
+	}
 
 	private void UpdateAimingEntitiesHashSet()
 	{
@@ -118,7 +117,6 @@ public class PlayerRocketLauncherController : MonoBehaviour
 			}
 		}
 	}
-
 
 	private void AddEntityToEntitiesAimedDictionary(Entity entity)
 	{
@@ -140,19 +138,30 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		if (_entitiesAimed.ContainsKey(entity)) _entitiesAimed[entity].Remove(baseRocket);
 	}
 
+	private void FindAndDelEmptyRocketFromHashSet(BaseRocket baseRocket)
+	{
+		if (_entitiesAimed.Count == 0) return;
+		foreach (var entityAimedList in _entitiesAimed)
+		{
+			if (entityAimedList.Value.Contains(baseRocket))
+			{
+				entityAimedList.Value.Remove(baseRocket);
+				return;
+			}
+		}
+	}
+
 	private HashSet<BaseRocket> GetAimingEntitiesHashSet(Entity entity) =>
-		_entitiesAimed.TryGetValue(entity, out var aimingEntitiesList) ? aimingEntitiesList : null;
+		_entitiesAimed.TryGetValue(entity, out var aimingEntitiesHashSet) ? aimingEntitiesHashSet : null;
 
 	private float GetAmountOfDamageAimingEntities(Entity entity)
 	{
-		var aimingEntitiesList = GetAimingEntitiesHashSet(entity);
-		if (aimingEntitiesList.Count == 0) return 0;
+		var aimingEntitiesHashSet = GetAimingEntitiesHashSet(entity);
+		if (aimingEntitiesHashSet.Count == 0) return 0;
 		var rez = 0f;
-		foreach (var aimingEntity in aimingEntitiesList)
-		{
-			if (aimingEntity.entityType != EntityType.Rocket) continue;
-			rez += aimingEntity.damage;
-		}
+		foreach (var aimingEntity in aimingEntitiesHashSet)
+			if (aimingEntity.entityType == EntityType.Rocket)
+				rez += aimingEntity.damage;
 		return rez;
 	}
 }
