@@ -26,7 +26,8 @@ public enum RocketType
 {
 	RocketModel1,
 	RocketModel2,
-	RocketModel3
+	RocketModel3,
+	RocketModel4
 }
 
 public enum PlanetType

@@ -20,6 +20,8 @@ namespace Rockets
 				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket2"));
 			_prefabRocketList.Add(RocketType.RocketModel3,
 				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket3"));
+			_prefabRocketList.Add(RocketType.RocketModel4,
+				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket4"));
 		}
 
 		private void Start()
@@ -39,8 +41,7 @@ namespace Rockets
 		}
 
 		public List<Entity> GetRocketsList() => _rocketsList;
-		
-		
+
 		private void DestroyRocket(Entity entity)
 		{
 			_rocketsList.Remove(entity);

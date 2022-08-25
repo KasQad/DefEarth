@@ -9,12 +9,11 @@ namespace AsteroidFragments
 {
 	public class AsteroidFragmentsController : MonoBehaviour
 	{
-		[SerializeField] private Transform spawnAsteroidFragments;
-		[SerializeField] private GameObject AsteroidFragmentsContainer;
+		[SerializeField] private GameObject asteroidFragmentsContainer;
+		[SerializeField] private PlanetController planetController;
 		public AsteroidFragment asteroidFragment;
-		private List<BaseAsteroidFragment> _asteroidFragmentsList = new List<BaseAsteroidFragment>();
+		private readonly List<BaseAsteroidFragment> _asteroidFragmentsList = new List<BaseAsteroidFragment>();
 		private readonly List<BaseAsteroidFragment> _prefabAsteroidFragmentsList = new List<BaseAsteroidFragment>();
-		[SerializeField] private PlanetController _planetController;
 
 		private void Awake()
 		{
@@ -26,13 +25,6 @@ namespace AsteroidFragments
 		{
 			BaseAsteroidFragment.destroyAsteroidFragment += DestroyAsteroidFragment;
 			BaseAsteroid.createRandomFragmentsAsteroid += CreateRandomAsteroidFragments;
-
-		}
-
-		private void Update()
-		{
-			if (Input.GetKeyDown(KeyCode.A))
-				CreateRandomAsteroidFragments(spawnAsteroidFragments.position);
 		}
 
 		private void FixedUpdate()
@@ -42,7 +34,7 @@ namespace AsteroidFragments
 
 		private void CreateRandomAsteroidFragments(Vector2 spawnPosition)
 		{
-			var asteroidFragmentsCount = Random.Range(1, 3);
+			var asteroidFragmentsCount = Random.Range(0, 2);
 			if (asteroidFragmentsCount == 0) return;
 			for (var i = 0; i < asteroidFragmentsCount; i++)
 			{
@@ -52,7 +44,9 @@ namespace AsteroidFragments
 						randomAngle);
 				var baseAsteroidFragment = CreateAsteroidFragment(spawnPosition, targetPosition);
 
-				DestroyAsteroidFragmentNotIntersectWithPlanets(baseAsteroidFragment);
+				if (_asteroidFragmentsList.Count > GameConfig.AsteroidCountLimit ||
+				    CheckAsteroidFragmentIntersectWithPlanets(baseAsteroidFragment))
+					baseAsteroidFragment.Destroy(4f);
 			}
 		}
 
@@ -65,12 +59,11 @@ namespace AsteroidFragments
 
 			var index = Random.Range(0, _prefabAsteroidFragmentsList.Count);
 			var prefabAsteroidFragment = _prefabAsteroidFragmentsList[index];
-			var baseAsteroidFragment = Instantiate(prefabAsteroidFragment, AsteroidFragmentsContainer.transform);
+			var baseAsteroidFragment = Instantiate(prefabAsteroidFragment, asteroidFragmentsContainer.transform);
 			baseAsteroidFragment.Initialize(pathPointsList, enemy);
 			_asteroidFragmentsList.Add(baseAsteroidFragment);
 			return baseAsteroidFragment;
 		}
-
 
 		private void DestroyAsteroidFragment(BaseAsteroidFragment baseAsteroidFragment, float time = 0)
 		{
@@ -78,25 +71,25 @@ namespace AsteroidFragments
 			Destroy(baseAsteroidFragment.gameObject, time);
 		}
 
-		private void DestroyAsteroidFragmentNotIntersectWithPlanets(BaseAsteroidFragment baseAsteroidFragment)
+		private bool CheckAsteroidFragmentIntersectWithPlanets(BaseAsteroidFragment baseAsteroidFragment)
 		{
-			var planetList = _planetController.GetPlanetList();
+			var planetList = planetController.GetPlanetList();
 			foreach (var planetItem in planetList)
 			{
 				if (!MathFunctions.LineCrossingCircle(
 					    baseAsteroidFragment.pathPointsList[0], baseAsteroidFragment.pathPointsList[1],
 					    planetItem.Value.GetPosition(), planetItem.Value.radiusOrbitCaptureGravity))
-				{
-					baseAsteroidFragment.Destroy(2f);
-				}
+					return true;
 			}
+			return false;
 		}
 
 		private void CheckEntryToOrbitCaptureGravity()
 		{
-			var planetList = _planetController.GetPlanetList();
-			if (planetList.Count == 0 || _asteroidFragmentsList.Count == 0 ||
-			    _asteroidFragmentsList.Count > 100) return;
+			var planetList = planetController.GetPlanetList();
+			if (planetList.Count == 0 ||
+			    _asteroidFragmentsList.Count == 0 ||
+			    _asteroidFragmentsList.Count > GameConfig.AsteroidCountLimit) return;
 
 			foreach (var planetItem in planetList)
 			{
@@ -116,7 +109,7 @@ namespace AsteroidFragments
 					    radiusOrbitSpaceFragments)
 						continue;
 
-					asteroidFragmentItem.collider2D.enabled = true;
+					asteroidFragmentItem.SetActiveCollider(true);
 
 					var angleEntryToOrbitCapture = MathFunctions.GetAngleBetweenTwoLines(
 						new Vector2(planetPosition.x + 100, planetPosition.y),
@@ -163,6 +156,5 @@ namespace AsteroidFragments
 		}
 
 		public List<BaseAsteroidFragment> GetAsteroidFragmentsList() => _asteroidFragmentsList;
-
 	}
 }

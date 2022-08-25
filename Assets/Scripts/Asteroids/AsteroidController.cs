@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using AsteroidFragments;
-using JetBrains.Annotations;
-using Rockets;
 using UnityEngine;
 
 namespace Asteroids
@@ -10,8 +7,6 @@ namespace Asteroids
 	public class AsteroidController : MonoBehaviour
 	{
 		[SerializeField] private GameObject asteroidContainer;
-		[SerializeField] private List<Transform> pathPointsList = new List<Transform>();
-		[SerializeField] private AsteroidFragmentsController asteroidFragmentsController;
 
 		private readonly Dictionary<AsteroidType, BaseAsteroid> _prefabAsteroidList =
 			new Dictionary<AsteroidType, BaseAsteroid>();
@@ -38,12 +33,12 @@ namespace Asteroids
 		}
 
 		public void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy,
-			float newSpeed = 0, float newSpeedRotate = 0)
+			float newSpeed = 0)
 		{
 			if(newPathPointsList.Count == 0) return;
 			if(!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
 			var asteroid = Instantiate(prefabAsteroid, asteroidContainer.transform);
-			asteroid.Initialize(newPathPointsList, enemy, newSpeed, newSpeedRotate);
+			asteroid.Initialize(newPathPointsList, enemy, newSpeed);
 			_asteroidsList.Add(asteroid);
 			addEntityToHashSetAction?.Invoke(asteroid);
 		}

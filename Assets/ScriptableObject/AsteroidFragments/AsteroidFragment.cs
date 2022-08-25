@@ -8,7 +8,7 @@ namespace ScriptableObject.AsteroidFragments
 	{
 		public List<GameObject> asteroidFragmentsPrefabs = new List<GameObject>();
 
-		public string title; 
+		public string title;
 		public float health;
 		public float damage;
 		public float speedMin;

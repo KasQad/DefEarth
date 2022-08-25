@@ -98,13 +98,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityType: 3
+  health: 0
   title: 
   damage: 0
-  target: {fileID: 0}
   asteroidFragment: {fileID: 11400000, guid: 287e5ead7288c2d44ba878de925db676, type: 2}
-  rigidbody2D: {fileID: -568472205049243477}
   collider2D: {fileID: 7608572426771315297}
-  health: 0
+  spriteRenderer: {fileID: 2878431767338465794}
   speed: 0
   speedRotate: 0
   pathPointsList: []

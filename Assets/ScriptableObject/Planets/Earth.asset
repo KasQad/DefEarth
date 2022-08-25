@@ -17,4 +17,4 @@ MonoBehaviour:
   radiusOrbitSpaceFragments: 4
   radiusOrbitSputniks: 5
   radiusOrbitCaptureGravity: 6
-  speedRotate: 1
+  speedRotate: 3

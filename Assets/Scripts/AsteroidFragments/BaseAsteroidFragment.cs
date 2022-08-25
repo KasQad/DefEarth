@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Interfaces;
 using ScriptableObject.AsteroidFragments;
 using UnityEngine;
@@ -10,7 +11,8 @@ namespace AsteroidFragments
 	public class BaseAsteroidFragment : Entity, IDamageable
 	{
 		public AsteroidFragment asteroidFragment;
-		[SerializeField] public Collider2D collider2D;
+		[SerializeField] private new Collider2D collider2D;
+		[SerializeField] private SpriteRenderer spriteRenderer;
 		public float speed;
 		public float speedRotate;
 
@@ -54,7 +56,6 @@ namespace AsteroidFragments
 			_directionMovingOnOrbitPlanet = directionMovingOnOrbitPlanet;
 		}
 
-
 		private void Move()
 		{
 			if (pathPointsList.Count == 0) return;
@@ -89,6 +90,8 @@ namespace AsteroidFragments
 			if (_angleOnOrbitPlanet > 360) _angleOnOrbitPlanet = 0;
 		}
 
+		internal void SetActiveCollider(bool mode) => collider2D.enabled = mode;
+
 		public void ApplyDamage(Entity entity)
 		{
 			if (entity.IsEnemy == IsEnemy) return;
@@ -101,6 +104,11 @@ namespace AsteroidFragments
 
 		public void Destroy(float time = 0)
 		{
+			if (time > 0)
+			{
+				spriteRenderer.DOFade(0, time).SetEase(Ease.InOutSine).SetEase(Ease.OutSine).SetAutoKill(true);
+				transform.DOScale(new Vector3(0, 0, 0), time).SetEase(Ease.InOutSine).SetAutoKill(true);
+			}
 			destroyAsteroidFragment?.Invoke(this, time);
 		}
 	}

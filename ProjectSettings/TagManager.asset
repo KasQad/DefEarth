@@ -41,12 +41,30 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: GameBackground
+    uniqueID: 2612491009
+    locked: 0
   - name: Planets
     uniqueID: 2855214059
     locked: 0
   - name: LinesRadius
     uniqueID: 1391644821
     locked: 0
+  - name: Sputniks
+    uniqueID: 2391639503
+    locked: 0
+  - name: AsteroidFragments
+    uniqueID: 2273444425
+    locked: 0
   - name: Rockets
     uniqueID: 424600657
+    locked: 0
+  - name: HpBars
+    uniqueID: 3620105419
+    locked: 0
+  - name: Asteroids
+    uniqueID: 1707086973
+    locked: 0
+  - name: Top
+    uniqueID: 2933077597
     locked: 0

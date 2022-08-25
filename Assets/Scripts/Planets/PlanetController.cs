@@ -9,13 +9,13 @@ namespace Planets
 
 		private readonly Dictionary<PlanetType, BasePlanet> _prefabPlanetList =
 			new Dictionary<PlanetType, BasePlanet>();
-		
+
 		private readonly Dictionary<PlanetType, BasePlanet> _planetsList =
 			new Dictionary<PlanetType, BasePlanet>();
 
 		private void Awake()
 		{
-			_prefabPlanetList.Add(PlanetType.Earth, Resources.Load<BasePlanet>("Prefabs/Planets/Earth"));
+			_prefabPlanetList.Add(PlanetType.Earth, Resources.Load<BasePlanet>("Prefabs/Planets/EarthCartoon"));
 			CreatePlanet(PlanetType.Earth);
 		}
 

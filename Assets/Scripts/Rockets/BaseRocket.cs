@@ -94,7 +94,5 @@ namespace Rockets
 		{
 			destroyRocket?.Invoke(this);
 		}
-
-
 	}
 }

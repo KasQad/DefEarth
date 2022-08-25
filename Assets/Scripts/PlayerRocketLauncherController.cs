@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Asteroids;
 using Planets;
 using Rockets;
 using UnityEngine;
 using Random = UnityEngine.Random;
-// ReSharper disable All
 
 public class PlayerRocketLauncherController : MonoBehaviour
 {
@@ -20,47 +16,41 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 	private void Start()
 	{
-		StartCoroutine(StartRockets());
 		AsteroidController.addEntityToHashSetAction += AddEntityToEntitiesAimedDictionary;
 		AsteroidController.delEntityFromHashSetAction += DelEntityFromEntitiesAimedDictionary;
 		BaseRocket.destroyRocket += FindAndDelEmptyRocketFromHashSet;
 	}
 
-	IEnumerator StartRockets()
+	private void FixedUpdate()
 	{
-		while (true)
-		{
-			yield return new WaitForSeconds(0.010f);
-			FindNearestFreeAsteroidToPlayerEntity();
-			UpdateAimingEntitiesHashSet();
-		}
+		LaunchRocketAtNearestFreeAsteroidFound();
+		UpdateAimingEntitiesHashSet();
 	}
 
-	private void FindNearestFreeAsteroidToPlayerEntity()
+	public void LaunchRocketAtNearestFreeAsteroidFound()
 	{
 		var planet = planetController.GetPlanetByType(PlanetType.Earth);
 
 		var asteroidsList = asteroidController.GetAsteroidsList();
 		if (asteroidsList.Count == 0) return;
 
-		Entity asteroid = null;
-
 		var whiteList = new HashSet<Entity>();
 
 		foreach (var entity in asteroidsList)
 		{
+			if (Vector2.Distance(planet.GetPosition(), entity.GetPosition()) >
+			    GameConfig.GetCurrentObjectObservationRadius()) continue;
+
 			var amountOfDamageAimingEntities = GetAmountOfDamageAimingEntities(entity);
-			if (amountOfDamageAimingEntities <= entity.health) whiteList.Add(entity);
+			if (amountOfDamageAimingEntities < entity.health) whiteList.Add(entity);
 		}
 
-		if (whiteList.Count > 0)
-			asteroid = FindNearestAsteroidToPlayerEntity(planet, whiteList);
-
+		Entity asteroid = null;
+		if (whiteList.Count > 0) asteroid = FindNearestAsteroidToPlayerEntity(planet, whiteList);
 		if (asteroid == null) return;
 
-		LunchRocketToEntity(asteroid, planet);
+		LaunchRocketToEntity(asteroid, planet);
 	}
-
 
 	private Entity FindNearestAsteroidToPlayerEntity(Entity planet, HashSet<Entity> entityList = null)
 	{
@@ -87,7 +77,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		return baseAsteroid;
 	}
 
-	private void LunchRocketToEntity(Entity entity, BasePlanet planet)
+	private void LaunchRocketToEntity(Entity entity, BasePlanet planet)
 	{
 		if (entity == null) return;
 		var randomAnglePointStartOnPlanet = Random.Range(0f, 360);
@@ -100,7 +90,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 		var pointEnd = entity.GetPosition();
 		var pathList = new List<Vector2> { pointStart, pointMiddle, pointEnd };
-		var rocket = rocketController.CreateRocket(RocketType.RocketModel3, pathList);
+		var rocket = rocketController.CreateRocket(RocketType.RocketModel4, pathList);
 		AddRocketToHashSet(entity, rocket);
 	}
 

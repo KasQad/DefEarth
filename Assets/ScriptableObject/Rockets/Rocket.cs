@@ -7,7 +7,6 @@ namespace ScriptableObject.Rockets
 		public float health;
 		public float damage;
 		public float speed;
-		
 		public float angularSpeed;
 	}
 }

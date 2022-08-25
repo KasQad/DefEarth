@@ -5,7 +5,7 @@ public class PathCreator : MonoBehaviour
 {
 	public List<Vector2> CreatePathPointsListByBezierMethod(List<Transform> listKeyPoint)
 	{
-		if(listKeyPoint.Count == 2)
+		if (listKeyPoint.Count == 2)
 		{
 			print($"listKeyPoint.Count == 2");
 			return new List<Vector2> { listKeyPoint[0].position, listKeyPoint[1].position };
@@ -18,7 +18,7 @@ public class PathCreator : MonoBehaviour
 
 		for (var j = 0; j < listKeyPoint.Count - 2; j++)
 		{
-			if(listKeyPoint[j] == null || listKeyPoint[j + 1] == null || listKeyPoint[j + 2] == null)
+			if (listKeyPoint[j] == null || listKeyPoint[j + 1] == null || listKeyPoint[j + 2] == null)
 				return null;
 
 			var p0 = 0.5f * (listKeyPoint[j].position + listKeyPoint[j + 1].position);
@@ -27,7 +27,7 @@ public class PathCreator : MonoBehaviour
 
 			var pointStep = 1.0f / numberOfPoints;
 
-			if(j == listKeyPoint.Count - 3)
+			if (j == listKeyPoint.Count - 3)
 				pointStep = 1.0f / (numberOfPoints - 1.0f);
 
 			for (var i = 0; i < numberOfPoints; i++)

@@ -1,50 +1,34 @@
 ﻿using System.Collections.Generic;
 using Asteroids;
 using Planets;
-using ScriptableObject.Waves;
 using UnityEngine;
-using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class WaveEnemyController : MonoBehaviour
 {
 	[SerializeField] private PlanetController planetController;
 	[SerializeField] private AsteroidController asteroidController;
-	[SerializeField] private WavesInfo wavesInfo;
 	[SerializeField] private new Camera camera;
-	
-	[SerializeField] private Button buttonSmall;
-	[SerializeField] private Button buttonMiddle;
-	[SerializeField] private Button buttonBig;
-	[SerializeField] private Button buttonNextWave;
-
+	[SerializeField] private LinesManager linesManager;
 
 	private Vector2 _pointSpawnEnemyEntity;
-	[SerializeField] private float radiusSpawnEnemyEntity = 2f;
 
-	[Range(0f, 2f)]
-	[SerializeField] private float difficultySpawnEnemy = 0.5f;
+	private const float WaveTime = 25f;
+	private const int AsteroidCount = 20;
+	private float _spawnEnemyCounter;
 
-	private float currenttWaveTime;
-	private float waveTime = 15f;
-	private int currentWaveNumber;
-	private bool waveIsRun;
-	
-	public int asteroidTypeSmallCount;
-	public float asteroidTypeSmallForwardSpeedMin;
-	public float asteroidTypeSmallForwardSpeedMax;
-
+	private readonly Functions.Counter _counterSpawnEnemy = new Functions.Counter();
+	private readonly Functions.Timer _timerWaveTimeCount = new Functions.Timer();
 
 	private void Awake()
 	{
-		buttonSmall.onClick.AddListener(() => CreateAsteroid(AsteroidType.Small));
-		buttonMiddle.onClick.AddListener(() => CreateAsteroid(AsteroidType.Middle));
-		buttonBig.onClick.AddListener(() => CreateAsteroid(AsteroidType.Big));
-		buttonNextWave.onClick.AddListener(() => NextWave());
-
 		_pointSpawnEnemyEntity = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
 		_pointSpawnEnemyEntity = new Vector2(
-			_pointSpawnEnemyEntity.x + radiusSpawnEnemyEntity,
-			_pointSpawnEnemyEntity.y + radiusSpawnEnemyEntity - 4f);
+			_pointSpawnEnemyEntity.x + GameConfig.RadiusSpawnEnemyEntity + GameConfig.RadiusSpawnEnemyEntityShiftX,
+			_pointSpawnEnemyEntity.y + GameConfig.RadiusSpawnEnemyEntity + GameConfig.RadiusSpawnEnemyEntityShiftY);
+
+		linesManager.DrawCircle(transform, _pointSpawnEnemyEntity, GameConfig.RadiusSpawnEnemyEntity, 0.03f,
+			Color.yellow);
 	}
 
 	private void Update()
@@ -53,37 +37,44 @@ public class WaveEnemyController : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.X)) CreateAsteroid(AsteroidType.Middle);
 		if (Input.GetKeyDown(KeyCode.C)) CreateAsteroid(AsteroidType.Big);
 
-
-		if (Time.time <= currenttWaveTime)
+		if (!_timerWaveTimeCount.CheckStop())
 		{
-			// CreateAsteroid(AsteroidType.Small);
-			//currenttWaveTime -= waveTime;
+			if (GameConfig.GamePaused) return;
+			if (!(_counterSpawnEnemy.CheckTime() >= _spawnEnemyCounter)) return;
+
+			CreateAsteroid(AsteroidType.Small);
+			_counterSpawnEnemy.Reset();
 		}
-		else if (!GameConfig.GamePaused) GameConfig.GamePaused = true;
+		else
+		{
+			GameConfig.GamePaused = true;
+			_counterSpawnEnemy.Stop();
+		}
 	}
 
-	private void NextWave()
+	public void NextWave()
 	{
-		currentWaveNumber++;
-		currenttWaveTime = Time.time + waveTime;
+		//if (_timerWaveTimeCount.CheckTime() > 0) return;
+		GameConfig.currentWaveNumber++;
+		_spawnEnemyCounter = WaveTime / (AsteroidCount + 1);
+		_timerWaveTimeCount.Start(WaveTime);
+		_counterSpawnEnemy.Start();
 		GameConfig.GamePaused = false;
 	}
 
-	public float GetWaveLeftTine() => GameConfig.GamePaused ? 0 : currenttWaveTime - Time.time;
-	public int GetWaveNumber() => currentWaveNumber;
+	public float GetWaveTimeLeft() => GameConfig.GamePaused ? 0 : _timerWaveTimeCount.CheckTime();
 
-	private void CreateAsteroid(AsteroidType asteroidType)
+	public void CreateAsteroid(AsteroidType asteroidType)
 	{
-		var pointStart = MathFunctions.GetPointInsideCircle(_pointSpawnEnemyEntity, radiusSpawnEnemyEntity);
+		var pointStart = MathFunctions.GetPointInsideCircle(_pointSpawnEnemyEntity, GameConfig.RadiusSpawnEnemyEntity);
 		var planet = planetController.GetPlanetByType(PlanetType.Earth);
 		var pointEnd = MathFunctions.GetPointInsideCircle(planet.GetPosition(),
-			planet.radiusPlanet + planet.radiusPlanet * difficultySpawnEnemy);
+			planet.radiusPlanet * GameConfig.RadiusDeSpawnRelativeToPlanetPositionAndRadius);
 		pointEnd = MathFunctions.LineExtension(pointStart, pointEnd, 10f);
-		float minSpeed = 10 + (Time.time);
-		float maxSpeed = 20 + (Time.time);
-		float newSpeed = Random.Range(minSpeed, maxSpeed);
-		float newSpeedRotate = newSpeed;
+		float minSpeed = 10 + 10 * GameConfig.currentWaveNumber;
+		float maxSpeed = 20 + 10 * GameConfig.currentWaveNumber;
+		var newSpeed = Random.Range(minSpeed, maxSpeed);
 		var pathPointsList = new List<Vector2> { pointStart, pointEnd };
-		asteroidController.CreateAsteroid(asteroidType, pathPointsList, true, newSpeed, newSpeedRotate);
+		asteroidController.CreateAsteroid(asteroidType, pathPointsList, true, newSpeed);
 	}
 }
