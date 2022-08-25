@@ -13,7 +13,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 	private readonly Dictionary<Entity, HashSet<BaseRocket>> _entitiesAimed =
 		new Dictionary<Entity, HashSet<BaseRocket>>();
-
+	
 	private void Start()
 	{
 		AsteroidController.addEntityToHashSetAction += AddEntityToEntitiesAimedDictionary;
@@ -21,7 +21,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		BaseRocket.destroyRocket += FindAndDelEmptyRocketFromHashSet;
 	}
 
-	private void FixedUpdate()
+	private void Update()
 	{
 		LaunchRocketAtNearestFreeAsteroidFound();
 		UpdateAimingEntitiesHashSet();
@@ -86,7 +86,6 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 		var pointMiddle = MathFunctions.GetXYCoordsOnBorderCircleByAngle(
 			planet.GetPosition(), planet.radiusOrbitSpaceFragments, randomAnglePointStartOnPlanet);
-
 
 		var pointEnd = entity.GetPosition();
 		var pathList = new List<Vector2> { pointStart, pointMiddle, pointEnd };
