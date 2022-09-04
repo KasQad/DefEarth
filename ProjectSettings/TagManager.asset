@@ -50,6 +50,9 @@ TagManager:
   - name: LinesRadius
     uniqueID: 1391644821
     locked: 0
+  - name: LaserGun
+    uniqueID: 1917044875
+    locked: 0
   - name: Sputniks
     uniqueID: 2391639503
     locked: 0

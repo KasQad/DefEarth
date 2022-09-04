@@ -2,6 +2,8 @@
 {
 	public interface IDamageable
 	{
-		public void ApplyDamage(Entity entity);
+		public float Health { get; set; }
+
+		public void ApplyDamage(float damageValue, ImpactType impactType);
 	}
 }

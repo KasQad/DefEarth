@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 10}
+  m_SizeDelta: {x: 100, y: 13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3153857293901034302
 CanvasRenderer:
@@ -75,7 +75,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1.5
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3153857295050523953
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 3153857295050523949}
   - component: {fileID: 3153857295050523948}
   - component: {fileID: 3153857295050523955}
-  - component: {fileID: 68839717576516722}
+  - component: {fileID: 5477352385101231975}
   m_Layer: 5
   m_Name: HpBar
   m_TagString: Untagged
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &3153857295050523955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &68839717576516722
+--- !u!114 &5477352385101231975
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,10 +186,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3153857295050523953}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc1cc5a3c6ab21a48bbe54f8e480ab3f, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c2fc2455f1d10d4892746cd7d457e50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   imageValue: {fileID: 2597889582347061883}
+  gameObjectImageValue: {fileID: 7958675978951698671}
 --- !u!1 &7958675978951698671
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,7 +226,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 10}
+  m_SizeDelta: {x: 100, y: 13}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4055832395643191077
 CanvasRenderer:
@@ -264,4 +265,4 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1.5
+  m_PixelsPerUnitMultiplier: 1

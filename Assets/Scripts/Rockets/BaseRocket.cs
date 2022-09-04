@@ -9,6 +9,8 @@ namespace Rockets
 {
 	public class BaseRocket : Entity, IDamageable
 	{
+		public float Health { get; set; }
+		
 		public Rocket rocket;
 		public float speed;
 		public float angularSpeed;
@@ -21,15 +23,15 @@ namespace Rockets
 
 		public void Initialize(List<Vector2> newPathPointsList, bool enemy = false)
 		{
-			title = gameObject.name = $"{rocket.title} #{Random.Range(0, 100000)}";
-			gameObject.transform.position = newPathPointsList[0];
+			title = name = $"{rocket.title} #{Random.Range(0, 100000)}";
+			transform.position = newPathPointsList[0];
 			MathFunctions.LookAt2D(transform, newPathPointsList[1]);
 			speed = rocket.speed / 1000;
 			angularSpeed = rocket.angularSpeed;
-			health = rocket.health;
+			Health = rocket.health;
 			damage = rocket.damage;
 			pathPointsList = newPathPointsList;
-			IsEnemy = enemy;
+			isEnemy = enemy;
 			entityType = EntityType.Rocket;
 		}
 
@@ -78,21 +80,29 @@ namespace Rockets
 			pathPointsList[pathPointsList.Count - 1] = entity.GetPosition();
 		}
 
-		public void ApplyDamage(Entity entity)
+		internal void OnCollisionEnter2D(Collision2D col)
 		{
-			if (entity.IsEnemy == IsEnemy) return;
+			if (!col.transform.TryGetComponent(out Entity entity)) return;
+			if (entity.isEnemy == isEnemy) return;
+			
+			if (entity.entityType != EntityType.Asteroid &&
+			    entity.entityType != EntityType.Warship) return;
 
-			if (entity.entityType == EntityType.AsteroidFragment)
-				//&& entity.GetComponent<BaseAsteroidFragment>().isInOrbitPlanet == null)
-				return;
-
-			health -= entity.damage;
-			if (health <= 0) Destroy();
+			if (!col.transform.TryGetComponent(out IDamageable damageable)) return;
+			damageable.ApplyDamage(damage, ImpactType.Explosive);
 		}
-
+		
 		private void Destroy()
 		{
 			destroyRocket?.Invoke(this);
+		}
+
+
+		public void ApplyDamage(float damageValue, ImpactType impactType)
+		{
+			print($"BaseRocket: ApplyDamage() : newDamage: {damageValue}");
+			Health -= damageValue;
+			if (Health<=0) Destroy();
 		}
 	}
 }

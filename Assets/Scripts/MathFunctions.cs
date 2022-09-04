@@ -48,32 +48,39 @@ public class MathFunctions : MonoBehaviour
 		vector = new Vector2(vector.x / lengthVector, vector.y / lengthVector);
 		return new Vector2(end.x + vector.x * length, end.y + vector.y * length);
 	}
-	
-	public static bool CircleLineIntersect__(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter, float circleRadius)
-	{
-		var dx = linePoint2.x - linePoint1.x;
-		var dy = linePoint2.y - linePoint1.y;
-		var a = dx * dx + dy * dy;
-		var b = 2 * (dx * (linePoint1.x - circleCenter.x) + dy * (linePoint1.y - circleCenter.y));
-		var c = circleCenter.x * circleCenter.x + circleCenter.y * circleCenter.y;
-		c += linePoint1.x * linePoint1.x + linePoint1.y * linePoint1.y;
-		c -= 2 * (circleCenter.x * linePoint1.x + circleCenter.y * linePoint1.y);
-		c -= circleRadius * circleRadius;
-		var bb4Ac = b * b - 4 * a * c;
-		return !(bb4Ac < 0);
-	}
-	
-	public static bool LineCrossingCircle(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter, float circleRadius)
+
+	// public static bool ____CircleLineIntersect(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter,
+	// 	float circleRadius)
+	// {
+	// 	var dx = linePoint2.x - linePoint1.x;
+	// 	var dy = linePoint2.y - linePoint1.y;
+	// 	var a = dx * dx + dy * dy;
+	// 	var b = 2 * (dx * (linePoint1.x - circleCenter.x) + dy * (linePoint1.y - circleCenter.y));
+	// 	var c = circleCenter.x * circleCenter.x + circleCenter.y * circleCenter.y;
+	// 	c += linePoint1.x * linePoint1.x + linePoint1.y * linePoint1.y;
+	// 	c -= 2 * (circleCenter.x * linePoint1.x + circleCenter.y * linePoint1.y);
+	// 	c -= circleRadius * circleRadius;
+	// 	var bb4Ac = b * b - 4 * a * c;
+	// 	return !(bb4Ac < 0);
+	// }
+
+	public static bool LineCrossingCircle(Vector2 linePoint1, Vector2 linePoint2, Vector2 circleCenter,
+		float circleRadius)
 	{
 		var dx = linePoint2.x - linePoint1.x;
 		var dy = linePoint2.y - linePoint1.y;
 		var vector = Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2);
 		var t = ((circleCenter.x - linePoint1.x) * dx + (circleCenter.y - linePoint1.y) * dy) / vector;
-		if(t > 1) t = 1;
-		else if(t < 0) t = 0;
+		if (t > 1) t = 1;
+		else if (t < 0) t = 0;
 		var nearestX = linePoint1.x + t * dx;
 		var nearestY = linePoint1.y + t * dy;
 		var dist = Mathf.Sqrt(Mathf.Pow(nearestX - circleCenter.x, 2) + Mathf.Pow(nearestY - circleCenter.y, 2));
 		return !(dist > circleRadius);
+	}
+
+	public static Vector2 RandomPointBetween2Points(Vector2 start, Vector2 end)
+	{
+		return start + Random.Range(0f, 1f) * (end - start);
 	}
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Earth
   radiusPlanet: 3
-  radiusOrbitSpaceFragments: 4
-  radiusOrbitSputniks: 5
+  radiusOrbitSpaceFragments: 5
+  radiusOrbitSputniks: 3.5
   radiusOrbitCaptureGravity: 6
   speedRotate: 3

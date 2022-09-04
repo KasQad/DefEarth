@@ -1,17 +1,22 @@
-﻿using Interfaces;
+﻿using System;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-	public bool IsEnemy { get; protected set; }
+	public bool isEnemy;
 
 	public EntityType entityType;
-	public float health;
 	public string title;
 	public float damage;
 
-	private void OnCollisionEnter2D(Collision2D col) =>
-		col.transform.GetComponent<IDamageable>()?.ApplyDamage(this);
-
 	public Vector2 GetPosition() => transform.position;
+
+
+	public static Action reDrawUiAction;
+
+	public void GetReward(long newReward)
+	{
+		GameConfig.Money += newReward;
+		reDrawUiAction?.Invoke();
+	}
 }

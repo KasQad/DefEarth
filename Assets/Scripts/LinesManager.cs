@@ -17,7 +17,7 @@ public class LinesManager : MonoBehaviour
 		line.endWidth = lineWidth;
 
 		line.loop = true;
-
+		
 		line.material.color = color;
 
 		line.useWorldSpace = false;
@@ -39,7 +39,7 @@ public class LinesManager : MonoBehaviour
 	public void DrawLine(Transform transformObject, List<Vector2> pointList, float lineWidth, Color color)
 	{
 		GameObject lineObject = new GameObject();
-		lineObject.name = $"orbitLine";
+		lineObject.name = $"Line";
 		lineObject.transform.parent = transformObject;
 
 		var line = lineObject.AddComponent<LineRenderer>();
@@ -51,6 +51,9 @@ public class LinesManager : MonoBehaviour
 
 		line.loop = false;
 
+		var material = Resources.Load("Materials/Laser") as Material;
+		line.material = material;
+		
 		line.material.color = color;
 
 		line.useWorldSpace = false;

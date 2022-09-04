@@ -24,3 +24,4 @@ MonoBehaviour:
   speedMax: 40
   speedRotateMin: 1
   speedRotateMax: 3
+  reward: 50

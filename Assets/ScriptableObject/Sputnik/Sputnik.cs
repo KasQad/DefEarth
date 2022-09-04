@@ -5,6 +5,7 @@ namespace ScriptableObject.Sputnik
 	{
 		public string title;
 		public float health;
-		public float speed;
+		public float speedMin;
+		public float speedMax;
 	}
 }

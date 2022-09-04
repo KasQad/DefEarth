@@ -8,5 +8,6 @@ namespace ScriptableObject.Asteroids
 		public float speedMin;
 		public float speedMax;
 		public float damage;
+		public int reward;
 	}
 }

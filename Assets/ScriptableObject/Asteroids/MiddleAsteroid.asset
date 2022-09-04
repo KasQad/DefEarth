@@ -17,5 +17,4 @@ MonoBehaviour:
   speedMin: 15
   speedMax: 25
   damage: 500
-  speedRotateMin: 15
-  speedRotateMax: 25
+  reward: 500

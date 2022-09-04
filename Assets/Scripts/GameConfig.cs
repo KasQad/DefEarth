@@ -1,13 +1,20 @@
-﻿public static class GameConfig
+﻿using UnityEngine;
+
+public static class GameConfig
 {
 	public static bool GamePaused { get; set; }
 
-	public const int AsteroidCountLimit = 50;
+	public static long Money { get; set; }
+
+	public const int AsteroidCountLimitOnOrbit = 50;
+	public const int AsteroidCountLimitOnScene = 100;
 	
 	public const float RadiusDeactivationAsteroid = 20;
 
 	public static readonly float[] ObjectObservationRadius = { 12, 15, 18 };
 	
+	
+	//spawn enemy entity
 	public const float RadiusSpawnEnemyEntity = 6f;
 	public const float RadiusSpawnEnemyEntityShiftY = -10f;
 	public const float RadiusSpawnEnemyEntityShiftX = 1f;
@@ -17,8 +24,8 @@
 	public static int currentWaveNumber;
 	
 	//upgrade object observation
-	private static int upgradeObjectObservationLevel = 1;
-	private static bool upgradeIgnoreAsteroidsFlyingPastThePlanet = false;
+	private static int upgradeObjectObservationLevel = 2;
+	// private static bool upgradeIgnoreAsteroidsFlyingPastThePlanet = false;
 	
 	//upgrade rockets
 	public static int upgradeRocketsSpeedLevel = 0;

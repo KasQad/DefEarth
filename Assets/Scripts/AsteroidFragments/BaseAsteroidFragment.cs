@@ -8,13 +8,20 @@ using Random = UnityEngine.Random;
 
 namespace AsteroidFragments
 {
-	public class BaseAsteroidFragment : Entity, IDamageable
+	public class BaseAsteroidFragment : Entity, IDamageable, IRewardable
 	{
 		public AsteroidFragment asteroidFragment;
 		[SerializeField] private new Collider2D collider2D;
 		[SerializeField] private SpriteRenderer spriteRenderer;
+
+		[SerializeField] private float hp;
+
+		public float Health { get; set; }
+		public long Reward { get; set; }
+
 		public float speed;
 		public float speedRotate;
+		private bool _isDestroyed;
 
 		public List<Vector2> pathPointsList = new List<Vector2>();
 		private int _currentPointIndex;
@@ -25,7 +32,13 @@ namespace AsteroidFragments
 		private Vector2 _positionPlanet;
 		private int _directionMovingOnOrbitPlanet;
 
+		private Sequence _sequence;
+		private Vector3 _defaultTransformScale;
+		private Color _defaultSpriteRendererColor;
+
 		public static Action<BaseAsteroidFragment, float> destroyAsteroidFragment;
+
+		public PlanetType? CheckIsInOrbitPlanet() => isInOrbitPlanet;
 
 		private void FixedUpdate()
 		{
@@ -39,11 +52,16 @@ namespace AsteroidFragments
 			transform.position = newPathPointsList[0];
 			speed = Random.Range(asteroidFragment.speedMin, asteroidFragment.speedMax) / 1000;
 			speedRotate = Random.Range(asteroidFragment.speedRotateMin, asteroidFragment.speedRotateMax);
-			health = asteroidFragment.health;
+			Health = hp = asteroidFragment.health;
 			damage = asteroidFragment.damage;
 			pathPointsList = newPathPointsList;
-			IsEnemy = enemy;
+			isEnemy = enemy;
 			entityType = EntityType.AsteroidFragment;
+
+			Reward = asteroidFragment.reward;
+
+			_defaultTransformScale = transform.localScale;
+			_defaultSpriteRendererColor = spriteRenderer.color;
 		}
 
 		public void InitializeMovingOnOrbitPlanet(PlanetType planetType, Vector2 positionPlanet,
@@ -92,24 +110,47 @@ namespace AsteroidFragments
 
 		internal void SetActiveCollider(bool mode) => collider2D.enabled = mode;
 
-		public void ApplyDamage(Entity entity)
+		private void PlayEffectCollision()
 		{
-			if (entity.IsEnemy == IsEnemy) return;
-			if (isInOrbitPlanet == null) return;
-			if (entity.entityType == EntityType.Rocket) return;
+			_sequence?.Kill();
+			_sequence = DOTween.Sequence();
+			transform.localScale = _defaultTransformScale;
+			spriteRenderer.color = _defaultSpriteRendererColor;
 
-			health -= entity.damage;
-			if (health <= 0) Destroy();
+			_sequence.Append(spriteRenderer.DOColor(new Color(255, 0, 0, 1), 0.05f)
+				.SetEase(Ease.InOutExpo)).SetLoops(2, LoopType.Yoyo).SetSpeedBased();
+
+			_sequence.Append(transform.DOScale(
+				new Vector2(transform.localScale.x * 0.8f, transform.localScale.y * 0.8f),
+				0.05f)).SetLoops(2, LoopType.Yoyo).SetSpeedBased();
 		}
 
-		public void Destroy(float time = 0)
+		public void ApplyDamage(float damageValue, ImpactType impactType)
 		{
-			if (time > 0)
+			if (_isDestroyed) return;
+			Health -= damageValue;
+			if (Health <= 0)
 			{
-				spriteRenderer.DOFade(0, time).SetEase(Ease.InOutSine).SetEase(Ease.OutSine).SetAutoKill(true);
-				transform.DOScale(new Vector3(0, 0, 0), time).SetEase(Ease.InOutSine).SetAutoKill(true);
+				_isDestroyed = true;
+				Destroy(impactType);
+				return;
 			}
+
+			PlayEffectCollision();
+			hp = Health;
+		}
+
+		public void Destroy(ImpactType impactType = ImpactType.LiveTimeLimit, float time = 0)
+		{
+			_sequence?.Kill();
+			if (impactType != ImpactType.Collision && impactType != ImpactType.LiveTimeLimit)
+				GetReward(Reward);
+
 			destroyAsteroidFragment?.Invoke(this, time);
+
+			if (!(time > 0)) return;
+			spriteRenderer.DOFade(0, time - 0.1f).SetEase(Ease.InOutSine).SetAutoKill();
+			transform.DOScale(new Vector3(0, 0, 0), time - 0.1f).SetEase(Ease.InOutSine).SetAutoKill();
 		}
 	}
 }

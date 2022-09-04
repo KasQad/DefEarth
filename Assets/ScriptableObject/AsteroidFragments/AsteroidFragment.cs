@@ -15,5 +15,6 @@ namespace ScriptableObject.AsteroidFragments
 		public float speedMax;
 		public float speedRotateMin;
 		public float speedRotateMax;
+		public int reward;
 	}
 }

@@ -1,8 +1,30 @@
-﻿public enum AsteroidType
+﻿public enum ImpactType
+{
+	LiveTimeLimit,
+	Collision,
+	LaserGun,
+	LaserDrill,
+	Explosive,
+	Repair
+}
+
+public enum ModuleType
+{
+	LaserGun,
+	ExplosiveDamage,
+	LaserDrill
+}
+
+public enum AsteroidType
 {
 	Small,
 	Middle,
 	Big
+}
+
+public enum SputnikType
+{
+	Sputnik
 }
 
 public enum WarshipType
@@ -19,7 +41,8 @@ public enum EntityType
 	Asteroid,
 	AsteroidFragment,
 	Sputnik,
-	Warship
+	Warship,
+	Module
 }		
 
 public enum RocketType

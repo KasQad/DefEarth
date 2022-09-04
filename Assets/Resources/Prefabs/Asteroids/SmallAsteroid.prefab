@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6202324988733509578}
   - component: {fileID: 2012339489013703026}
   - component: {fileID: 5265470835384750178}
-  - component: {fileID: 3908321185600799947}
-  - component: {fileID: 7228711601771562965}
+  - component: {fileID: 2378957924845064967}
+  - component: {fileID: 6480163324956865794}
   m_Layer: 0
   m_Name: SmallAsteroid
   m_TagString: Untagged
@@ -65,12 +65,13 @@ MonoBehaviour:
   damage: 0
   spriteRenderer: {fileID: 7378076369170996175}
   hpBarController: {fileID: 2012339489013703026}
+  asteroidTransform: {fileID: 6587699964307889258}
   speed: 0
   speedRotate: 0
   asteroid: {fileID: 11400000, guid: 06eed6825f0a5244c89714d77f8bd451, type: 2}
   currentPointIndex: 0
   pathPointsList: []
---- !u!50 &3908321185600799947
+--- !u!50 &2378957924845064967
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &7228711601771562965
+--- !u!70 &6480163324956865794
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,8 +105,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.01612091, y: -0.017417882}
-  m_Size: {x: 0.9674175, y: 0.82961625}
+  m_Offset: {x: 0.020432934, y: -0.018854177}
+  m_Size: {x: 1.0134882, y: 0.82583886}
   m_Direction: 1
 --- !u!1 &5195641763397311370
 GameObject:
@@ -118,7 +119,7 @@ GameObject:
   - component: {fileID: 6587699964307889258}
   - component: {fileID: 7378076369170996175}
   m_Layer: 0
-  m_Name: SmallAsteroid
+  m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +132,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5195641763397311370}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_Children: []

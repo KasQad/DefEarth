@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5830014099813362213}
   - component: {fileID: -4694271744500416506}
   - component: {fileID: 7689244989902720385}
-  - component: {fileID: 2815150593842997300}
+  - component: {fileID: 6367952546791610633}
   m_Layer: 0
   m_Name: AsteroidFragments3
   m_TagString: Untagged
@@ -97,13 +97,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e3303c236f109f46bb652bb615fe2fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemy: 0
   entityType: 3
-  health: 0
   title: 
   damage: 0
   asteroidFragment: {fileID: 11400000, guid: 287e5ead7288c2d44ba878de925db676, type: 2}
   collider2D: {fileID: 7689244989902720385}
   spriteRenderer: {fileID: 5830014099813362213}
+  hp: 0
   speed: 0
   speedRotate: 0
   pathPointsList: []
@@ -123,7 +124,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.58
---- !u!50 &2815150593842997300
+--- !u!50 &6367952546791610633
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0

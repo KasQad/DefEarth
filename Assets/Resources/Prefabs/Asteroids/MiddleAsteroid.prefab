@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6202324988733509578}
   - component: {fileID: 2012339489013703026}
   - component: {fileID: 5265470835384750178}
-  - component: {fileID: 3908321185600799947}
-  - component: {fileID: 7228711601771562965}
+  - component: {fileID: 2378957924845064967}
+  - component: {fileID: 6480163324956865794}
   m_Layer: 0
   m_Name: MiddleAsteroid
   m_TagString: Untagged
@@ -65,12 +65,13 @@ MonoBehaviour:
   damage: 0
   spriteRenderer: {fileID: 7378076369170996175}
   hpBarController: {fileID: 2012339489013703026}
+  asteroidTransform: {fileID: 6587699964307889258}
   speed: 0
   speedRotate: 0
   asteroid: {fileID: 11400000, guid: a883c1fd19f12594797689c80c3a2731, type: 2}
   currentPointIndex: 0
   pathPointsList: []
---- !u!50 &3908321185600799947
+--- !u!50 &2378957924845064967
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &7228711601771562965
+--- !u!70 &6480163324956865794
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,8 +105,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.01612091, y: -0.011452932}
-  m_Size: {x: 1.408832, y: 1.0085763}
+  m_Offset: {x: 0.026694626, y: -0.023862755}
+  m_Size: {x: 1.1987524, y: 0.8958887}
   m_Direction: 1
 --- !u!1 &5195641763397311370
 GameObject:
@@ -118,7 +119,7 @@ GameObject:
   - component: {fileID: 6587699964307889258}
   - component: {fileID: 7378076369170996175}
   m_Layer: 0
-  m_Name: MiddleAsteroid
+  m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,9 +132,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5195641763397311370}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 6202324988733509578}
   m_RootOrder: 0
@@ -179,7 +180,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8bec23c957f1c0940810850eb7a67aa6, type: 3}
-  m_Color: {r: 1, g: 0.784406, b: 0.5518868, a: 1}
+  m_Color: {r: 1, g: 0.98204255, b: 0.3915094, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
