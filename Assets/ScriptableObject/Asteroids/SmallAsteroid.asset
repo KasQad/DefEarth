@@ -18,3 +18,5 @@ MonoBehaviour:
   speedMax: 20
   damage: 100
   reward: 100
+  asteroidFragmentsMin: 1
+  asteroidFragmentsMax: 5

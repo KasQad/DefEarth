@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 1129318491824612724}
   - component: {fileID: 2878431767338465794}
   - component: {fileID: 1661563472318990709}
-  - component: {fileID: 7608572426771315297}
-  - component: {fileID: -8889448786076893838}
   m_Layer: 0
   m_Name: AsteroidFragments4
   m_TagString: Untagged
@@ -102,46 +100,11 @@ MonoBehaviour:
   title: 
   damage: 0
   asteroidFragment: {fileID: 11400000, guid: 287e5ead7288c2d44ba878de925db676, type: 2}
-  collider2D: {fileID: 7608572426771315297}
+  collider2D: {fileID: 0}
   spriteRenderer: {fileID: 2878431767338465794}
   hp: 0
   speed: 0
   speedRotate: 0
-  pathPointsList: []
---- !u!58 &7608572426771315297
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8088473474757977914}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.03, y: 0.01}
-  serializedVersion: 2
-  m_Radius: 0.63
---- !u!50 &-8889448786076893838
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8088473474757977914}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 1
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  _isDestroyed: 0
+  asteroidFragmentType: 0
+  _firstInit: 1

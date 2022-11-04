@@ -9363,6 +9363,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5cd172045cc4bb7a3e0c47b083af06c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _prefabAsteroidFragment: {fileID: 6833472876984426663, guid: 61af4af9f2ba52149886e40849a21027, type: 3}
+  _minPoolCapacity: 250
+  _maxPoolCapacity: 300
+  _poolCount: 0
+  _asteroidFragmentsListCount: 0
+  _asteroidCountOnOrbit: 0
   planetSpawner: {fileID: 1632156101}
   asteroidFragment: {fileID: 11400000, guid: 287e5ead7288c2d44ba878de925db676, type: 2}
   _spawnAsteroidFragment: {fileID: 329185313}
@@ -9694,6 +9700,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497031834}
   m_CullTransparentMesh: 1
+--- !u!1 &1520277064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1520277065}
+  m_Layer: 0
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1520277065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520277064}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.184722, y: 0.44565114, z: -0.5802588}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1520762622
 GameObject:
   m_ObjectHideFlags: 0

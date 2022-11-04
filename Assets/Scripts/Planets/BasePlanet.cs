@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using DG.Tweening;
 using HpBar;
 using Interfaces;
+using Modules;
 using ScriptableObject.Planets;
-using Ui;
+using Types;
 using UnityEngine;
 
 namespace Planets
@@ -13,6 +14,10 @@ namespace Planets
 		[SerializeField] private SpriteRenderer spriteRenderer;
 		[SerializeField] private Transform planetTransform;
 		[SerializeField] private HpBarController hpBarController;
+
+
+		[SerializeField] private ModuleCreator moduleCreator;
+		private List<BaseModule> _modules = new List<BaseModule>();
 
 		public Planet planet;
 
@@ -29,7 +34,7 @@ namespace Planets
 		private Vector3 _defaultTransformScale;
 		private Color _defaultSpriteRendererColor;
 
-		private HpBar.HpBar _hpBar;
+		private HpBarSimple _hpBarSimple;
 
 		public void Initialize()
 		{
@@ -43,7 +48,18 @@ namespace Planets
 			damage = 1000000f;
 
 			hp = Health = 5;
+
+
+			// var moduleDetector = moduleCreator.CreateModule(ModuleType.EnemyDetector, transform) as ModuleEnemyDetector;
+			// _modules.Add(moduleDetector);
 			//
+			// moduleDetector.Run();
+			// moduleDetector.SetConfig(
+			// 	planet.radiusOrbitCaptureGravity,
+			// 	new List<EntityType> { EntityType.Sputnik},
+			// 	false);
+
+
 			// if (_showLine)
 			// {
 			// 	var drawLine = gameObject.AddComponent<LinesManager>();
@@ -58,7 +74,7 @@ namespace Planets
 			_defaultTransformScale = transform.localScale;
 			_defaultSpriteRendererColor = spriteRenderer.color;
 
-			_hpBar = hpBarController.Initialize(Health, Health, new Vector3(0, -radiusPlanet, 0), 3f);
+			_hpBarSimple = hpBarController.Initialize(Health, Health, new Vector3(0, -radiusPlanet, 0), 3f);
 		}
 
 		private void Update()
@@ -83,7 +99,7 @@ namespace Planets
 
 		private void OnCollisionEnter2D(Collision2D col)
 		{
-			print($"collision.contactCount: {col.transform.name}");
+			// print($"collision.contactCount: {col.transform.name}");
 			if (!col.transform.TryGetComponent(out Entity entity)) return;
 			if (entity.isEnemy == isEnemy) return;
 			if (entity.entityType == EntityType.Asteroid ||
@@ -94,14 +110,14 @@ namespace Planets
 			}
 		}
 
-	
+
 		public void ApplyDamage(float damageValue, ImpactType impactType)
 		{
-			print($"BasePlanet: ApplyDamage()");
+			// print($"BasePlanet: ApplyDamage()");
 			PlayEffectContactEntity();
 			Health -= 1;
 			hp = Health;
-			_hpBar.SetValue(Health);
+			_hpBarSimple.SetValue(Health);
 			if (Health <= 0) EndGame();
 		}
 

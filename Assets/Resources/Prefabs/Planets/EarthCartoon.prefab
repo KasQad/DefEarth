@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1158575212433360046}
   - component: {fileID: 6502498450252402758}
   - component: {fileID: 211230616043171144}
+  - component: {fileID: -3066016744525797379}
   m_Layer: 0
   m_Name: EarthCartoon
   m_TagString: Untagged
@@ -70,6 +71,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 8372002700226856420}
   planetTransform: {fileID: 3455475800566673324}
   hpBarController: {fileID: 211230616043171144}
+  moduleCreator: {fileID: -3066016744525797379}
   planet: {fileID: 11400000, guid: 7792349b0272afa458be91b5c5f26968, type: 2}
   hp: 0
   radiusOrbitSpaceFragments: 0
@@ -108,6 +110,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dec1c209cd9fd784dbfcc0922ba50df5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3066016744525797379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5606804317896678883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7839d12f47f4bb2952592fc759f67c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6069817395164513591

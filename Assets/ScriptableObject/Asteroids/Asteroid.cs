@@ -9,5 +9,7 @@ namespace ScriptableObject.Asteroids
 		public float speedMax;
 		public float damage;
 		public int reward;
+		public int asteroidFragmentsMin;
+		public int asteroidFragmentsMax;
 	}
 }

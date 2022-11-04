@@ -2,6 +2,7 @@
 using Interfaces;
 using Modules;
 using ScriptableObject.Sputnik;
+using Types;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,13 +31,13 @@ namespace Sputniks
 			isEnemy = newIsEnemy;
 			
 			var moduleLaserDrill = moduleCreator.CreateModule(ModuleType.LaserDrill, transform);
+			_modules.Add(moduleLaserDrill);
 			moduleLaserDrill.Run();
 			
 			var moduleLaserGun = moduleCreator.CreateModule(ModuleType.LaserGun, transform);
+			_modules.Add(moduleLaserGun);
 			moduleLaserGun.Run();
 			
-			_modules.Add(moduleLaserDrill);
-			_modules.Add(moduleLaserGun);
 			
 			transform.position = MoveOnOrbit();
 		}

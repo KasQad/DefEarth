@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Planets;
+using Types;
 using UnityEngine;
 
 namespace Sputniks
@@ -22,23 +23,6 @@ namespace Sputniks
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.S)) CreateSputnik();
-			if (Input.GetKeyDown(KeyCode.R)) RunAllModules();
-		}
-
-		private void RunAllModules()
-		{
-			print($"RunAllModules()");
-			if (_sputniksList.Count == 0) return;
-			foreach (var entity in _sputniksList)
-			{
-				var sputnik = (BaseSputnik)entity;
-				var modules = sputnik.GetModules();
-				if (modules.Count == 0) continue;
-				foreach (var module in modules)
-				{
-					module.Use();
-				}
-			}
 		}
 
 		public void CreateSputnik(SputnikType sputnikType=SputnikType.Sputnik, bool enemy = false)

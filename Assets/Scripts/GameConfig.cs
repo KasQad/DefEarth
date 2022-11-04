@@ -27,6 +27,12 @@ public static class GameConfig
 	private static int upgradeObjectObservationLevel = 2;
 	// private static bool upgradeIgnoreAsteroidsFlyingPastThePlanet = false;
 	
+	
+	//upgrade Asteroids DropChanceAsteroidFragments
+	public static float upgradeDropChanceAsteroidFragmentGold = 0;
+	public static float upgradeDropChanceAsteroidFragmentCrystal = 0;
+	
+	
 	//upgrade rockets
 	public static int upgradeRocketsSpeedLevel = 0;
 	public static int upgradeRocketsManeuverabilityLevel = 0;

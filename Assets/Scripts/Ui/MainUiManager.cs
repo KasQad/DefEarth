@@ -4,6 +4,7 @@ using CustomTimers;
 using Rockets;
 using Sputniks;
 using TMPro;
+using Types;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,17 @@ namespace Ui
 {
 	public class MainUiManager : MonoBehaviour
 	{
+		private static MainUiManager _instance;
+
+		public static MainUiManager Instance
+		{
+			get
+			{
+				if (_instance == null) _instance = FindObjectOfType<MainUiManager>();
+				return _instance;
+			}
+		}
+
 		[SerializeField] private AsteroidSpawner asteroidSpawner;
 		[SerializeField] private RocketSpawner rocketSpawner;
 		[SerializeField] private AsteroidFragmentsSpawner asteroidFragmentsSpawner;
@@ -62,15 +74,8 @@ namespace Ui
 		private void Start()
 		{
 			_customTimerUpdateUi.InitTimer(0.1f, true, true);
-			_customTimerUpdateUi.AddTask(UpdateUi);
+			_customTimerUpdateUi.AddCallBack(UpdateUi);
 			_customTimerUpdateUi.Run();
-
-			Entity.reDrawUiAction += UpdateUi;
-		}
-
-		private void OnDestroy()
-		{
-			Entity.reDrawUiAction -= UpdateUi;
 		}
 
 		private void Update()
@@ -78,7 +83,7 @@ namespace Ui
 			Fps();
 		}
 
-		private void UpdateUi()
+		public void UpdateUi()
 		{
 			var asteroidsList = asteroidSpawner.GetAsteroidsList();
 			var rocketsList = rocketSpawner.GetRocketsList();

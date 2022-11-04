@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Interfaces;
 using ScriptableObject.Rockets;
+using Types;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,8 +19,6 @@ namespace Rockets
 
 		public List<Vector2> pathPointsList;
 		private int _currentPointIndex = 1;
-
-		public static Action<BaseRocket> destroyRocket;
 
 		public void Initialize(List<Vector2> newPathPointsList, bool enemy = false)
 		{
@@ -44,7 +43,7 @@ namespace Rockets
 		{
 			if (_currentPointIndex >= pathPointsList.Count || pathPointsList.Count == 0)
 			{
-				Destroy();
+				DestroyRocket();
 				return;
 			}
 			LookAtTarget(gameObject.transform, pathPointsList[_currentPointIndex], angularSpeed);
@@ -92,9 +91,10 @@ namespace Rockets
 			damageable.ApplyDamage(damage, ImpactType.Explosive);
 		}
 		
-		private void Destroy()
+		private void DestroyRocket()
 		{
-			destroyRocket?.Invoke(this);
+			RocketSpawner.Instance.DestroyRocket(this);
+			PlayerRocketLauncherController.Instance.FindAndDelEmptyRocketFromHashSet(this);
 		}
 
 
@@ -102,7 +102,7 @@ namespace Rockets
 		{
 			print($"BaseRocket: ApplyDamage() : newDamage: {damageValue}");
 			Health -= damageValue;
-			if (Health<=0) Destroy();
+			if (Health <= 0) DestroyRocket();
 		}
 	}
 }

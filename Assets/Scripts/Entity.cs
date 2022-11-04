@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Types;
+using Ui;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
@@ -11,12 +12,11 @@ public class Entity : MonoBehaviour
 
 	public Vector2 GetPosition() => transform.position;
 
-
-	public static Action reDrawUiAction;
+	public bool IsActive() => transform.gameObject.activeInHierarchy;
 
 	public void GetReward(long newReward)
 	{
 		GameConfig.Money += newReward;
-		reDrawUiAction?.Invoke();
+		MainUiManager.Instance.UpdateUi();
 	}
 }

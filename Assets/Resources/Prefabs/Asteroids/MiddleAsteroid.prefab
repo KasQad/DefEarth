@@ -59,13 +59,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d8490295cfa4296be9e82747fb61114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemy: 0
   entityType: 2
-  health: 0
   title: 
   damage: 0
-  spriteRenderer: {fileID: 7378076369170996175}
-  hpBarController: {fileID: 2012339489013703026}
-  asteroidTransform: {fileID: 6587699964307889258}
+  _spriteRenderer: {fileID: 7378076369170996175}
+  _asteroidTransform: {fileID: 6587699964307889258}
+  _hpBarController: {fileID: 2012339489013703026}
+  _reward: 0
+  _hp: 0
   speed: 0
   speedRotate: 0
   asteroid: {fileID: 11400000, guid: a883c1fd19f12594797689c80c3a2731, type: 2}

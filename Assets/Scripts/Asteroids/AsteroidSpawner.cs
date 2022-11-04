@@ -1,20 +1,27 @@
 using System;
 using System.Collections.Generic;
+using Types;
 using UnityEngine;
 
 namespace Asteroids
 {
 	public class AsteroidSpawner : MonoBehaviour
 	{
+		private static AsteroidSpawner _instance;
+		public static AsteroidSpawner Instance
+		{
+			get
+			{
+				if (_instance == null) _instance = FindObjectOfType<AsteroidSpawner>();
+				return _instance;
+			}
+		}
+
 		private readonly Dictionary<AsteroidType, BaseAsteroid> _prefabAsteroidList =
 			new Dictionary<AsteroidType, BaseAsteroid>();
 
 		private readonly HashSet<BaseAsteroid> _asteroidsList = new HashSet<BaseAsteroid>();
-		
-		public static Action<Entity> addEntityToHashSetAction;
-		public static Action<Entity> delEntityFromHashSetAction;
-		
-		
+
 		private void Awake()
 		{
 			_prefabAsteroidList.Add(AsteroidType.Small,
@@ -25,25 +32,20 @@ namespace Asteroids
 				Resources.Load<BaseAsteroid>("Prefabs/Asteroids/BigAsteroid"));
 		}
 
-		private void Start()
-		{
-			BaseAsteroid.destroyAsteroidAction += DestroyAsteroid;
-		}
-
 		public void CreateAsteroid(AsteroidType asteroidType, List<Vector2> newPathPointsList, bool enemy,
-			float newSpeed = 0)
+			int waveNumber)
 		{
-			if(newPathPointsList.Count == 0) return;
-			if(!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
+			if (newPathPointsList.Count == 0) return;
+			if (!_prefabAsteroidList.TryGetValue(asteroidType, out var prefabAsteroid)) return;
 			var asteroid = Instantiate(prefabAsteroid, transform);
-			asteroid.Initialize(newPathPointsList, enemy, newSpeed);
+			asteroid.Initialize(newPathPointsList, enemy, waveNumber);
 			_asteroidsList.Add(asteroid);
-			addEntityToHashSetAction?.Invoke(asteroid);
+			PlayerRocketLauncherController.Instance.AddEntityToEntitiesAimedDictionary(asteroid);
 		}
 
-		private void DestroyAsteroid(BaseAsteroid entity)
+		public void DestroyAsteroid(BaseAsteroid entity)
 		{
-			delEntityFromHashSetAction?.Invoke(entity);
+			PlayerRocketLauncherController.Instance.DelEntityFromEntitiesAimedDictionary(entity);
 			_asteroidsList.Remove(entity);
 			Destroy(entity.gameObject);
 		}

@@ -2,6 +2,7 @@
 using Asteroids;
 using CustomTimers;
 using Planets;
+using Types;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,8 +16,8 @@ public class WaveEnemyController : MonoBehaviour
 	private Vector2 _pointStartSpawnEnemyEntity;
 	private Vector2 _pointEndSpawnEnemyEntity;
 
-	private const float WaveTime = 10f;
-	private const int EnemyCount = 5;
+	private const float WaveTime = 5;
+	private const int EnemyCount = 3;
 	private float _spawnEnemyCounter;
 
 	private CustomTimer _counterSpawnEnemy;
@@ -90,10 +91,7 @@ public class WaveEnemyController : MonoBehaviour
 		var pointEnd = MathFunctions.GetPointInsideCircle(planet.GetPosition(),
 			planet.radiusPlanet * GameConfig.RadiusDeSpawnRelativeToPlanetPositionAndRadius);
 		pointEnd = MathFunctions.LineExtension(pointStart, pointEnd, 10f);
-		float minSpeed = 10 + 10 * GameConfig.currentWaveNumber;
-		float maxSpeed = 20 + 10 * GameConfig.currentWaveNumber;
-		var newSpeed = Random.Range(minSpeed, maxSpeed);
 		var pathPointsList = new List<Vector2> { pointStart, pointEnd };
-		asteroidSpawner.CreateAsteroid(asteroidType, pathPointsList, true, newSpeed);
+		asteroidSpawner.CreateAsteroid(asteroidType, pathPointsList, true, GameConfig.currentWaveNumber);
 	}
 }

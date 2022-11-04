@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3800330032351498342}
   - component: {fileID: -3679112003340474763}
   - component: {fileID: -8249165410930412723}
+  - component: {fileID: 5524894191422783888}
   m_Layer: 0
   m_Name: Sputnik
   m_TagString: Untagged
@@ -64,6 +65,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7839d12f47f4bb2952592fc759f67c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!58 &5524894191422783888
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3800330032351498336}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.012613088, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.3248177
 --- !u!1 &4341469595386502846
 GameObject:
   m_ObjectHideFlags: 0

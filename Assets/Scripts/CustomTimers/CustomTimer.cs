@@ -5,86 +5,88 @@ namespace CustomTimers
 {
 	public class CustomTimer : MonoBehaviour
 	{
-		protected float _timeStart;
-		protected float _timeCount;
-		protected bool _isStarted;
-		protected bool _autoReset;
-		protected bool _runTasksBeforeTimer;
+		protected float timeStart;
+		protected float duration;
+		protected bool isStarted;
+		protected bool autoReset;
+		protected bool runCallBacksBeforeBeginningTimer;
 
-		private Action _taskAction;
-		private bool _taskIsCompleted;
+		private Action _callBack;
+		private bool _callBackIsCompleted;
 
-		internal void AddTask(Action taskAction) => _taskAction += taskAction;
-		internal void DelTask(Action taskAction) => _taskAction -= taskAction;
-		internal void ClearTasks() => _taskAction = null;
+		internal void AddCallBack(Action callBack) => _callBack += callBack;
+		internal void DelCallBack(Action callBack) => _callBack -= callBack;
+		internal void ClearCallBacks() => _callBack = null;
 
-		private void CheckTask()
+		private void CheckCallbacks()
 		{
-			if (!_isStarted) return;
-			if (_taskAction == null) return;
-			if (_runTasksBeforeTimer)
+			if (!isStarted) return;
+			if (_callBack == null) return;
+			if (runCallBacksBeforeBeginningTimer)
 			{
-				if (!_taskIsCompleted)
+				if (!_callBackIsCompleted)
 				{
-					_taskAction?.Invoke();
-					_taskIsCompleted = true;
+					_callBack?.Invoke();
+					_callBackIsCompleted = true;
 				}
 
-				if (CheckTime()) _taskIsCompleted = false;
+				if (CheckTime()) _callBackIsCompleted = false;
 			}
-			else if (CheckTime()) _taskAction?.Invoke();
+			else if (CheckTime()) _callBack?.Invoke();
 		}
 
 		private void Update()
 		{
-			if (CheckRun()) CheckTask();
+			if (CheckRun()) CheckCallbacks();
 		}
 
-		internal void InitTimer(float timeCount, bool autoReset = false, bool runTasksBeforeTimer = false)
+		internal void InitTimer(float duration, bool autoReset = false, bool runCallBacksBeforeBeginningTimer = false)
 		{
-			_timeCount = timeCount;
-			_autoReset = autoReset;
-			_runTasksBeforeTimer = runTasksBeforeTimer;
+			this.duration = duration;
+			this.autoReset = autoReset;
+			this.runCallBacksBeforeBeginningTimer = runCallBacksBeforeBeginningTimer;
 		}
 
 		internal void Run()
 		{
-			if (_timeCount == 0)
+			if (duration == 0)
 			{
-				print($"error: timeCount = 0");
+				print($"error: duration = 0");
 				return;
 			}
 
-			_timeStart = Time.time;
-			_isStarted = true;
+			timeStart = Time.time;
+			isStarted = true;
 		}
 
 		internal void Reset() => Run();
-		internal void Stop() => _isStarted = false;
-		internal bool AutoReset(bool autoReset) => _autoReset = autoReset;
-		internal void RunTasksBeforeTimer(bool runTasksBeforeTimer) => _runTasksBeforeTimer = runTasksBeforeTimer;
+		internal void Stop() => isStarted = false;
+		internal bool AutoReset(bool newAutoReset) => autoReset = newAutoReset;
 
-		internal bool CheckRun() => _isStarted;
+		internal void RunCallBacksBeforeBeginningTimer(bool runTasksBeforeTimer) =>
+			runCallBacksBeforeBeginningTimer = runTasksBeforeTimer;
+
+		internal bool CheckRun() => isStarted;
 
 		internal float GetTime()
 		{
-			if (!_isStarted) return 0;
-			return Time.time - _timeStart;
+			if (!isStarted) return 0;
+			return Time.time - timeStart;
 		}
 
 		internal float GetLeftTime()
 		{
-			if (!_isStarted) return 0;
-			return _timeCount - GetTime();
+			if (!isStarted) return 0;
+			return duration - GetTime();
 		}
 
-		internal bool GetStatus() => _isStarted;
+		internal bool GetStatus() => isStarted;
 
 		internal virtual bool CheckTime()
 		{
-			if (!_isStarted) return false;
-			if (!(Time.time - _timeStart > _timeCount)) return false;
-			if (_autoReset) Reset();
+			if (!isStarted) return false;
+			if (!(Time.time - timeStart > duration)) return false;
+			if (autoReset) Reset();
 			else Stop();
 			return true;
 		}

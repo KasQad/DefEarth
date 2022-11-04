@@ -4,6 +4,5 @@
 	{
 		public void Run();
 		public void Stop();
-		public void Use();
 	}
 }

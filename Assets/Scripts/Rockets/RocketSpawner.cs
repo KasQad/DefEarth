@@ -1,10 +1,21 @@
 using System.Collections.Generic;
+using Types;
 using UnityEngine;
 
 namespace Rockets
 {
 	public class RocketSpawner : MonoBehaviour
 	{
+		private static RocketSpawner _instance;
+		public static RocketSpawner Instance
+		{
+			get
+			{
+				if (_instance == null) _instance = FindObjectOfType<RocketSpawner>();
+				return _instance;
+			}
+		}
+
 		private readonly List<Entity> _rocketsList = new List<Entity>();
 
 		private readonly Dictionary<RocketType, BaseRocket> _prefabRocketList =
@@ -12,24 +23,8 @@ namespace Rockets
 
 		private void Awake()
 		{
-			_prefabRocketList.Add(RocketType.RocketModel1,
-				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket1"));
-			_prefabRocketList.Add(RocketType.RocketModel2,
-				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket2"));
-			_prefabRocketList.Add(RocketType.RocketModel3,
-				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket3"));
-			_prefabRocketList.Add(RocketType.RocketModel4,
-				Resources.Load<BaseRocket>("Prefabs/Rockets/Rocket4"));
-		}
-
-		private void Start()
-		{
-			BaseRocket.destroyRocket += DestroyRocket;
-		}
-
-		private void OnDestroy()
-		{			
-			BaseRocket.destroyRocket -= DestroyRocket;
+			_prefabRocketList.Add(RocketType.RocketModelA,
+				Resources.Load<BaseRocket>("Prefabs/Rockets/RocketModelA"));
 		}
 
 		public BaseRocket CreateRocket(RocketType rocketType, List<Vector2> newPointList, bool isEnemy = false)
@@ -45,7 +40,7 @@ namespace Rockets
 
 		public List<Entity> GetRocketsList() => _rocketsList;
 
-		private void DestroyRocket(Entity entity)
+		public void DestroyRocket(Entity entity)
 		{
 			_rocketsList.Remove(entity);
 			Destroy(entity.gameObject);

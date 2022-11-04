@@ -14,14 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   asteroidFragmentsPrefabs:
   - {fileID: 6527462625288843858, guid: 61af4af9f2ba52149886e40849a21027, type: 3}
-  - {fileID: 4301382716836927154, guid: a70dd4acf57b0c641b6662025e42930f, type: 3}
-  - {fileID: 6178782854472918123, guid: 7fb324ddfa9d5f54cb45ca7c471c7ef7, type: 3}
-  - {fileID: 8088473474757977914, guid: e3c006fb5971f3b4b9cf5c7e78e06075, type: 3}
   title: Asteroid Fragment
   health: 10
   damage: 10
-  speedMin: 20
-  speedMax: 40
+  speedMin: 30
+  speedMax: 50
   speedRotateMin: 1
   speedRotateMax: 3
   reward: 50

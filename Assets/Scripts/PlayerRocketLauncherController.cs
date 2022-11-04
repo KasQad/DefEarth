@@ -1,14 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Asteroids;
 using CustomTimers;
 using Planets;
 using Rockets;
+using Types;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class PlayerRocketLauncherController : MonoBehaviour
 {
+	private static PlayerRocketLauncherController _instance;
+
+	public static PlayerRocketLauncherController Instance
+	{
+		get
+		{
+			if (_instance == null) _instance = FindObjectOfType<PlayerRocketLauncherController>();
+			return _instance;
+		}
+	}
+
 	[SerializeField] private PlanetSpawner planetSpawner;
 	[SerializeField] private RocketSpawner rocketSpawner;
 	[SerializeField] private AsteroidSpawner asteroidSpawner;
@@ -27,11 +37,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 	private void Start()
 	{
-		AsteroidSpawner.addEntityToHashSetAction += AddEntityToEntitiesAimedDictionary;
-		AsteroidSpawner.delEntityFromHashSetAction += DelEntityFromEntitiesAimedDictionary;
-		BaseRocket.destroyRocket += FindAndDelEmptyRocketFromHashSet;
-
-		_launchRocketTimer.AddTask(() =>
+		_launchRocketTimer.AddCallBack(() =>
 		{
 			UpdateAimingEntitiesList();
 			LaunchRocketAtNearestFreeAsteroidFound();
@@ -40,15 +46,8 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		_launchRocketTimer.Run();
 
 		_updateAimingEntitiesTimer.InitTimer(.1f, true);
-		_updateAimingEntitiesTimer.AddTask(UpdateAimingEntitiesList);
+		_updateAimingEntitiesTimer.AddCallBack(UpdateAimingEntitiesList);
 		_updateAimingEntitiesTimer.Run();
-	}
-
-	private void OnDestroy()
-	{
-		AsteroidSpawner.addEntityToHashSetAction -= AddEntityToEntitiesAimedDictionary;
-		AsteroidSpawner.delEntityFromHashSetAction -= DelEntityFromEntitiesAimedDictionary;
-		BaseRocket.destroyRocket -= FindAndDelEmptyRocketFromHashSet;
 	}
 
 	private void LaunchRocketAtNearestFreeAsteroidFound()
@@ -113,7 +112,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 
 		var pointEnd = entity.GetPosition();
 		var pathList = new List<Vector2> { pointStart, pointMiddle, pointEnd };
-		var rocket = rocketSpawner.CreateRocket(RocketType.RocketModel4, pathList);
+		var rocket = rocketSpawner.CreateRocket(RocketType.RocketModelA, pathList);
 		AddRocketToHashSet(entity, rocket);
 	}
 
@@ -131,12 +130,12 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		}
 	}
 
-	private void AddEntityToEntitiesAimedDictionary(Entity entity)
+	public void AddEntityToEntitiesAimedDictionary(Entity entity)
 	{
 		_entitiesAimed.Add(entity, new HashSet<BaseRocket>());
 	}
 
-	private void DelEntityFromEntitiesAimedDictionary(Entity entity)
+	public void DelEntityFromEntitiesAimedDictionary(Entity entity)
 	{
 		if (_entitiesAimed.ContainsKey(entity)) _entitiesAimed.Remove(entity);
 	}
@@ -151,7 +150,7 @@ public class PlayerRocketLauncherController : MonoBehaviour
 		if (_entitiesAimed.ContainsKey(entity)) _entitiesAimed[entity].Remove(baseRocket);
 	}
 
-	private void FindAndDelEmptyRocketFromHashSet(BaseRocket baseRocket)
+	public void FindAndDelEmptyRocketFromHashSet(BaseRocket baseRocket)
 	{
 		if (_entitiesAimed.Count == 0) return;
 		foreach (var entityAimedList in _entitiesAimed)

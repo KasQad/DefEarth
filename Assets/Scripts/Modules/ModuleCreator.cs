@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Types;
 using UnityEngine;
 
 namespace Modules
@@ -19,13 +20,19 @@ namespace Modules
 			
 			_prefabModulesList.Add(ModuleType.ExplosiveDamage,
 				Resources.Load<BaseModule>("Prefabs/Modules/ModuleExplosiveDamage"));
+			
+			_prefabModulesList.Add(ModuleType.RocketGun,
+				Resources.Load<BaseModule>("Prefabs/Modules/ModuleRocketGun"));
+			
+			_prefabModulesList.Add(ModuleType.EnemyDetector,
+				Resources.Load<BaseModule>("Prefabs/Modules/EnemyDetector"));
 		}
 
 		public BaseModule CreateModule(ModuleType moduleType, Transform transformParent)
 		{
 			if (!_prefabModulesList.TryGetValue(moduleType, out var baseModule)) return null;
-			var module = Instantiate(baseModule, transform);
-			module.Initialize(moduleType, transformParent);
+			var module = Instantiate(baseModule, transformParent);
+			module.Initialize(moduleType);
 			return module;
 		}
 

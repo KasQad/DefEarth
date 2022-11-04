@@ -1,4 +1,6 @@
-﻿namespace Interfaces
+﻿using Types;
+
+namespace Interfaces
 {
 	public interface IDamageable
 	{
